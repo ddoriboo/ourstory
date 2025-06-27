@@ -244,8 +244,26 @@ export class GdmLiveAudio extends LitElement {
   private async initClient() {
     this.initAudio();
 
+    // 다양한 방법으로 API 키 확인
+    const apiKey = process.env.GEMINI_API_KEY || 
+                  process.env.VITE_GEMINI_API_KEY || 
+                  (import.meta as any)?.env?.VITE_GEMINI_API_KEY ||
+                  'AIzaSyCP1jzXV2kYfbMv7UnntKm1OKfwHXydPTA'; // 폴백으로 직접 설정
+    
+    console.log('환경 변수들:', {
+      'process.env.GEMINI_API_KEY': process.env.GEMINI_API_KEY ? 'defined' : 'undefined',
+      'process.env.VITE_GEMINI_API_KEY': process.env.VITE_GEMINI_API_KEY ? 'defined' : 'undefined',
+      'import.meta.env.VITE_GEMINI_API_KEY': (import.meta as any)?.env?.VITE_GEMINI_API_KEY ? 'defined' : 'undefined',
+      'final apiKey': apiKey ? `${apiKey.substring(0, 10)}...` : 'undefined'
+    });
+    
+    if (!apiKey || apiKey === 'PLACEHOLDER_API_KEY') {
+      this.updateError('API 키가 설정되지 않았습니다. 환경 변수를 확인해주세요.');
+      return;
+    }
+
     this.client = new GoogleGenAI({
-      apiKey: process.env.GEMINI_API_KEY,
+      apiKey: apiKey,
     });
 
     this.outputNode.connect(this.outputAudioContext.destination);
