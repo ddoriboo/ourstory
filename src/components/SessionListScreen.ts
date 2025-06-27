@@ -21,112 +21,114 @@ export class SessionListScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: 2rem 1rem;
+      padding: var(--spacing-xl) var(--spacing);
       background: var(--color-background);
       min-height: 100vh;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: var(--spacing-3xl);
     }
 
     .header h1 {
       color: var(--color-primary);
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--spacing-sm);
     }
 
     .header p {
-      color: var(--color-muted-foreground);
-      font-size: 1.25rem;
+      color: var(--color-text-light);
+      font-size: var(--font-size-senior-lg);
+      line-height: 1.5;
     }
 
     .sessions-grid {
       display: grid;
-      gap: 1.5rem;
+      gap: var(--spacing-lg);
       max-width: 800px;
       margin: 0 auto;
     }
 
     .session-card {
-      background: var(--color-card);
-      border: 2px solid var(--color-border);
+      background: var(--gradient-surface);
+      border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      box-shadow: var(--shadow);
-      transition: all 0.2s;
+      padding: var(--spacing-lg);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease-in-out;
       cursor: pointer;
       position: relative;
+      overflow: hidden;
     }
 
     .session-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       box-shadow: var(--shadow-lg);
     }
 
     .session-card.completed {
-      border-color: var(--color-primary);
-      background: linear-gradient(135deg, var(--color-card) 0%, var(--color-muted) 100%);
+      border-color: var(--color-success);
+      background: linear-gradient(135deg, var(--color-surface) 0%, #FFFFFF 50%, var(--color-surface) 100%);
+    }
+
+    .session-card.completed::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-primary);
     }
 
     .session-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
+      margin-bottom: var(--spacing);
     }
 
     .session-number {
-      background: var(--color-primary);
-      color: var(--color-primary-foreground);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+      background: var(--gradient-primary);
+      color: var(--color-text-inverse);
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1.125rem;
+      font-size: var(--font-size-senior-base);
+      box-shadow: var(--shadow);
     }
 
     .session-number.completed {
-      background: var(--color-accent);
+      background: var(--gradient-secondary);
     }
 
     .session-status {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
+      gap: var(--spacing-sm);
+      font-size: var(--font-size-sm);
       font-weight: 600;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    .status-dot.completed {
-      background: var(--color-accent);
-    }
-
-    .status-dot.pending {
-      background: var(--color-muted-foreground);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-full);
+      background: var(--color-surface);
     }
 
     .session-title {
-      font-size: 1.375rem;
+      font-size: var(--font-size-senior-xl);
       font-weight: 600;
-      margin-bottom: 0.75rem;
-      color: var(--color-foreground);
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-text);
       line-height: 1.3;
     }
 
     .session-description {
-      color: var(--color-muted-foreground);
-      font-size: 1rem;
-      margin-bottom: 1rem;
+      color: var(--color-text-light);
+      font-size: var(--font-size-base);
+      margin-bottom: var(--spacing);
       line-height: 1.5;
     }
 
@@ -134,14 +136,15 @@ export class SessionListScreen extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.875rem;
-      color: var(--color-muted-foreground);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing);
     }
 
     .conversation-count {
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: var(--spacing-xs);
     }
 
     .last-updated {
@@ -150,86 +153,48 @@ export class SessionListScreen extends LitElement {
 
     .session-actions {
       display: flex;
-      gap: 0.75rem;
-      margin-top: 1rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .action-button {
-      flex: 1;
-      padding: 0.75rem 1rem;
-      border: 2px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      background: var(--color-background);
-      color: var(--color-foreground);
-    }
-
-    .action-button:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-sm);
-    }
-
-    .action-button.primary {
-      background: var(--color-primary);
-      color: var(--color-primary-foreground);
-      border-color: var(--color-primary);
-    }
-
-    .action-button.secondary {
-      background: var(--color-secondary);
-      color: var(--color-secondary-foreground);
-      border-color: var(--color-secondary);
-    }
-
-    .action-button.destructive {
-      background: var(--color-destructive);
-      color: var(--color-destructive-foreground);
-      border-color: var(--color-destructive);
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing);
+      padding-top: var(--spacing);
+      border-top: 1px solid var(--color-border-light);
     }
 
     .empty-state {
       text-align: center;
-      margin-top: 4rem;
-      color: var(--color-muted-foreground);
+      margin-top: var(--spacing-3xl);
+      color: var(--color-text-light);
+      padding: var(--spacing-2xl);
     }
 
     .empty-state h3 {
-      margin-bottom: 1rem;
+      margin-bottom: var(--spacing);
+      color: var(--color-text);
     }
 
     .empty-state p {
-      font-size: 1.125rem;
+      font-size: var(--font-size-senior-base);
     }
 
     @media (max-width: 480px) {
       :host {
-        padding: 1rem 0.5rem;
+        padding: var(--spacing) var(--spacing-sm);
       }
 
       .header {
-        margin-bottom: 2rem;
+        margin-bottom: var(--spacing-xl);
       }
 
       .session-card {
-        padding: 1.25rem;
+        padding: var(--spacing);
       }
 
       .session-title {
-        font-size: 1.25rem;
+        font-size: var(--font-size-senior-lg);
       }
 
       .session-actions {
         flex-direction: column;
-        gap: 0.5rem;
-      }
-
-      .action-button {
-        min-height: 44px;
+        gap: var(--spacing-sm);
       }
     }
   `;
@@ -327,7 +292,7 @@ export class SessionListScreen extends LitElement {
               <div class="session-header">
                 <div class="session-number ${completed ? 'completed' : ''}">${session.id}</div>
                 <div class="session-status">
-                  <div class="status-dot ${completed ? 'completed' : 'pending'}"></div>
+                  <div class="status-dot ${completed ? 'success' : 'primary'}"></div>
                   ${completed ? '완료' : '진행 중'}
                 </div>
               </div>
@@ -346,19 +311,20 @@ export class SessionListScreen extends LitElement {
 
               <div class="session-actions">
                 <button 
-                  class="action-button primary"
+                  class="btn btn-primary btn-sm"
                   @click=${(e: Event) => { e.stopPropagation(); this.handleSessionSelect(session.id); }}>
                   ${completed ? '다시 보기' : '시작하기'}
                 </button>
                 
                 ${conversationCount > 0 ? html`
                   <button 
-                    class="action-button secondary"
+                    class="btn btn-outline btn-sm"
                     @click=${(e: Event) => this.handleSessionReset(session.id, e)}>
                     초기화
                   </button>
                   <button 
-                    class="action-button destructive"
+                    class="btn btn-ghost btn-sm"
+                    style="color: var(--color-error); border-color: var(--color-error);"
                     @click=${(e: Event) => this.handleSessionDelete(session.id, e)}>
                     삭제
                   </button>

@@ -66,232 +66,212 @@ export class InterviewScreen extends LitElement {
     }
 
     .header {
-      background: var(--color-card);
-      border-bottom: 2px solid var(--color-border);
-      padding: 1rem;
+      background: var(--gradient-surface);
+      border-bottom: 1px solid var(--color-border-light);
+      padding: var(--spacing);
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: var(--z-sticky);
+      box-shadow: var(--shadow-sm);
     }
 
     .header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 0.75rem;
+      margin-bottom: var(--spacing-sm);
     }
 
     .back-button {
       background: transparent;
       border: none;
       color: var(--color-primary);
-      font-size: 1.5rem;
+      font-size: var(--font-size-2xl);
       cursor: pointer;
-      padding: 0.5rem;
+      padding: var(--spacing-sm);
+      border-radius: var(--radius);
+      transition: all 0.2s ease-in-out;
+    }
+
+    .back-button:hover {
+      background: var(--color-surface-hover);
+      transform: translateX(-2px);
     }
 
     .session-title {
-      font-size: 1.25rem;
+      font-size: var(--font-size-senior-lg);
       font-weight: 600;
-      color: var(--color-foreground);
+      color: var(--color-text);
       text-align: center;
       flex: 1;
     }
 
     .connection-status {
-      font-size: 0.875rem;
+      font-size: var(--font-size-sm);
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--color-destructive);
-    }
-
-    .status-dot.connected {
-      background: var(--color-accent);
+      gap: var(--spacing-sm);
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-full);
+      background: var(--color-surface);
     }
 
     .current-question {
-      background: var(--color-muted);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: 1rem;
-      margin-top: 0.75rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius);
+      padding: var(--spacing);
+      margin-top: var(--spacing-sm);
+      box-shadow: var(--shadow-sm);
     }
 
     .question-label {
-      font-size: 0.875rem;
+      font-size: var(--font-size-sm);
       font-weight: 600;
-      color: var(--color-muted-foreground);
-      margin-bottom: 0.5rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-sm);
     }
 
     .question-text {
-      font-size: 1rem;
+      font-size: var(--font-size-senior-base);
       font-weight: 500;
-      color: var(--color-foreground);
-      line-height: 1.4;
+      color: var(--color-text);
+      line-height: 1.5;
     }
 
     .conversation-area {
       flex: 1;
       overflow-y: auto;
-      padding: 1rem;
+      padding: var(--spacing);
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: var(--spacing);
+      background: var(--color-background);
     }
 
     .message {
       max-width: 85%;
-      padding: 1rem 1.25rem;
-      border-radius: 1.25rem;
-      font-size: 1.125rem;
-      line-height: 1.5;
+      padding: var(--spacing) var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      font-size: var(--font-size-senior-base);
+      line-height: 1.6;
       box-shadow: var(--shadow-sm);
+      position: relative;
     }
 
     .message.ai {
       align-self: flex-start;
-      background: var(--color-card);
-      border: 2px solid var(--color-border);
-      color: var(--color-foreground);
+      background: var(--gradient-surface);
+      border: 1px solid var(--color-border-light);
+      color: var(--color-text);
     }
 
     .message.user {
       align-self: flex-end;
-      background: var(--color-primary);
-      color: var(--color-primary-foreground);
+      background: var(--gradient-primary);
+      color: var(--color-text-inverse);
     }
 
     .message-header {
-      font-size: 0.75rem;
+      font-size: var(--font-size-xs);
       font-weight: 600;
-      opacity: 0.7;
-      margin-bottom: 0.25rem;
+      opacity: 0.8;
+      margin-bottom: var(--spacing-xs);
     }
 
     .message-timestamp {
-      font-size: 0.75rem;
-      opacity: 0.6;
-      margin-top: 0.5rem;
+      font-size: var(--font-size-xs);
+      opacity: 0.7;
+      margin-top: var(--spacing-sm);
     }
 
     .controls-area {
-      background: var(--color-card);
-      border-top: 2px solid var(--color-border);
-      padding: 1.5rem;
+      background: var(--gradient-surface);
+      border-top: 1px solid var(--color-border-light);
+      padding: var(--spacing-lg);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 1rem;
+      gap: var(--spacing);
+      box-shadow: var(--shadow-md);
     }
 
     .main-control {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
+      gap: var(--spacing);
     }
 
     .record-button {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      border: 3px solid var(--color-border);
-      background: var(--color-primary);
-      color: var(--color-primary-foreground);
-      font-size: 2rem;
+      width: 88px;
+      height: 88px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: var(--gradient-primary);
+      color: var(--color-text-inverse);
+      font-size: var(--font-size-3xl);
       cursor: pointer;
       box-shadow: var(--shadow-lg);
-      transition: all 0.2s;
+      transition: all 0.2s ease-in-out;
       display: flex;
       align-items: center;
       justify-content: center;
+      position: relative;
     }
 
-    .record-button:hover {
+    .record-button:hover:not(:disabled) {
       transform: scale(1.05);
+      box-shadow: var(--shadow-xl);
     }
 
     .record-button:disabled {
-      opacity: 0.5;
+      opacity: 0.6;
       cursor: not-allowed;
+      transform: none;
     }
 
     .record-button.recording {
-      background: var(--color-destructive);
+      background: var(--color-error);
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.1); }
+      0%, 100% { 
+        transform: scale(1);
+        box-shadow: var(--shadow-lg);
+      }
+      50% { 
+        transform: scale(1.1);
+        box-shadow: var(--shadow-xl);
+      }
     }
 
     .secondary-controls {
       display: flex;
-      gap: 0.75rem;
-    }
-
-    .control-button {
-      padding: 0.75rem 1rem;
-      border: 2px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      background: var(--color-background);
-      color: var(--color-foreground);
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.2s;
-    }
-
-    .control-button:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow);
-    }
-
-    .control-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .status-message {
       text-align: center;
-      font-size: 1rem;
-      color: var(--color-muted-foreground);
+      font-size: var(--font-size-base);
+      color: var(--color-text-light);
       font-weight: 500;
+      max-width: 300px;
     }
 
     .error-message {
-      background: var(--color-destructive);
-      color: var(--color-destructive-foreground);
-      padding: 1rem;
-      border-radius: var(--radius-lg);
-      margin: 1rem;
+      background: var(--color-error);
+      color: var(--color-text-inverse);
+      padding: var(--spacing);
+      border-radius: var(--radius);
+      margin: var(--spacing);
       font-weight: 600;
       text-align: center;
-    }
-
-    .loading-spinner {
-      width: 20px;
-      height: 20px;
-      border: 2px solid var(--color-muted);
-      border-top: 2px solid var(--color-primary);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      box-shadow: var(--shadow-sm);
     }
 
     @media (max-width: 480px) {
@@ -300,26 +280,30 @@ export class InterviewScreen extends LitElement {
       }
 
       .header {
-        padding: 0.75rem;
+        padding: var(--spacing-sm);
       }
 
       .session-title {
-        font-size: 1.125rem;
+        font-size: var(--font-size-senior-base);
       }
 
       .conversation-area {
-        padding: 0.75rem;
+        padding: var(--spacing-sm);
       }
 
       .message {
-        font-size: 1rem;
-        padding: 0.875rem 1rem;
+        font-size: var(--font-size-base);
+        padding: var(--spacing-sm) var(--spacing);
       }
 
       .record-button {
-        width: 70px;
-        height: 70px;
-        font-size: 1.75rem;
+        width: 76px;
+        height: 76px;
+        font-size: var(--font-size-2xl);
+      }
+
+      .secondary-controls {
+        gap: var(--spacing-xs);
       }
     }
   `;
@@ -759,7 +743,7 @@ ${this.currentQuestionIndex === 0 ?
             </button>
             <div class="session-title">세션 ${this.sessionId}: ${currentSession?.title}</div>
             <div class="connection-status">
-              <div class="status-dot ${this.isSessionConnected ? 'connected' : ''}"></div>
+              <div class="status-dot ${this.isSessionConnected ? 'success' : 'error'}"></div>
               ${this.isSessionConnected ? '연결됨' : '연결 끊어짐'}
             </div>
           </div>
@@ -802,19 +786,19 @@ ${this.currentQuestionIndex === 0 ?
 
           <div class="secondary-controls">
             <button 
-              class="control-button"
+              class="btn btn-outline btn-sm"
               @click=${this.previousQuestion}
               ?disabled=${this.currentQuestionIndex <= 0}>
               이전 질문
             </button>
             <button 
-              class="control-button"
+              class="btn btn-ghost btn-sm"
               @click=${this.resetSession}
               ?disabled=${this.isRecording}>
               재시작
             </button>
             <button 
-              class="control-button"
+              class="btn btn-outline btn-sm"
               @click=${this.nextQuestion}
               ?disabled=${this.currentQuestionIndex >= (currentSession?.questions.length || 1) - 1}>
               다음 질문
@@ -823,8 +807,8 @@ ${this.currentQuestionIndex === 0 ?
 
           <div class="status-message">
             ${this.isInitializing ? html`
-              <div style="display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
-                <div class="loading-spinner"></div>
+              <div style="display: flex; align-items: center; gap: var(--spacing-sm); justify-content: center;">
+                <div class="spinner"></div>
                 초기화 중...
               </div>
             ` : this.status}

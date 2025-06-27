@@ -15,7 +15,7 @@ export class LoginScreen extends LitElement {
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 2rem;
+      padding: var(--spacing-xl);
       background: var(--color-background);
     }
 
@@ -26,137 +26,101 @@ export class LoginScreen extends LitElement {
 
     .logo {
       text-align: center;
-      margin-bottom: 3rem;
+      margin-bottom: var(--spacing-3xl);
     }
 
     .logo h1 {
       color: var(--color-primary);
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
+      font-size: var(--font-size-senior-3xl);
+      margin-bottom: var(--spacing-sm);
+      font-weight: 700;
     }
 
     .logo p {
-      color: var(--color-muted-foreground);
-      font-size: 1.25rem;
+      color: var(--color-text-light);
+      font-size: var(--font-size-senior-lg);
+      line-height: 1.5;
     }
 
     .form-card {
-      background: var(--color-card);
-      border: 2px solid var(--color-border);
+      background: var(--gradient-surface);
+      border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: 2rem;
+      padding: var(--spacing-xl);
       box-shadow: var(--shadow-lg);
     }
 
     .form-header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: var(--spacing-xl);
     }
 
     .form-header h2 {
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-text);
     }
 
     .form-header p {
-      color: var(--color-muted-foreground);
-      font-size: 1rem;
+      color: var(--color-text-light);
+      font-size: var(--font-size-base);
     }
 
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: var(--spacing-lg);
     }
 
     .form-label {
       display: block;
-      font-size: 1.125rem;
+      font-size: var(--font-size-senior-base);
       font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: var(--color-foreground);
+      margin-bottom: var(--spacing-sm);
+      color: var(--color-text);
     }
 
-    .form-input {
-      width: 100%;
-      padding: 1rem;
-      font-size: 1.125rem;
-      border: 2px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      background: var(--color-background);
-      color: var(--color-foreground);
+    .error-message {
+      background: var(--color-error);
+      color: var(--color-text-inverse);
+      padding: var(--spacing);
+      border-radius: var(--radius);
+      margin-bottom: var(--spacing);
+      font-weight: 600;
       box-shadow: var(--shadow-sm);
-    }
-
-    .form-input:focus {
-      outline: none;
-      border-color: var(--color-primary);
-      box-shadow: var(--shadow-md);
-    }
-
-    .submit-button {
-      width: 100%;
-      background: var(--color-primary);
-      color: var(--color-primary-foreground);
-      border: 2px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: 1.25rem 2rem;
-      font-size: 1.25rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: var(--shadow);
-      transition: all 0.2s;
-      margin-bottom: 1rem;
-    }
-
-    .submit-button:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .submit-button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
     }
 
     .toggle-mode {
       text-align: center;
-      margin-top: 1.5rem;
+      margin-top: var(--spacing-lg);
+      color: var(--color-text-light);
     }
 
     .toggle-link {
       color: var(--color-primary);
       text-decoration: none;
       font-weight: 600;
-      font-size: 1.125rem;
+      font-size: var(--font-size-senior-base);
+      transition: all 0.2s ease-in-out;
     }
 
     .toggle-link:hover {
       text-decoration: underline;
-    }
-
-    .error-message {
-      background: var(--color-destructive);
-      color: var(--color-destructive-foreground);
-      padding: 1rem;
-      border-radius: var(--radius-lg);
-      margin-bottom: 1rem;
-      font-weight: 600;
+      color: var(--color-primary-dark);
     }
 
     @media (max-width: 480px) {
       :host {
-        padding: 1rem;
+        padding: var(--spacing);
       }
 
       .logo h1 {
-        font-size: 2.5rem;
+        font-size: var(--font-size-senior-2xl);
       }
 
       .logo p {
-        font-size: 1.125rem;
+        font-size: var(--font-size-senior-base);
       }
 
       .form-card {
-        padding: 1.5rem;
+        padding: var(--spacing-lg);
       }
     }
   `;
@@ -250,7 +214,7 @@ export class LoginScreen extends LitElement {
               <label class="form-label">아이디</label>
               <input
                 type="text"
-                class="form-input"
+                class="input"
                 .value=${this.username}
                 @input=${(e: InputEvent) => this.username = (e.target as HTMLInputElement).value}
                 placeholder="아이디를 입력하세요"
@@ -262,7 +226,7 @@ export class LoginScreen extends LitElement {
               <label class="form-label">비밀번호</label>
               <input
                 type="password"
-                class="form-input"
+                class="input"
                 .value=${this.password}
                 @input=${(e: InputEvent) => this.password = (e.target as HTMLInputElement).value}
                 placeholder="비밀번호를 입력하세요"
@@ -275,7 +239,7 @@ export class LoginScreen extends LitElement {
                 <label class="form-label">비밀번호 확인</label>
                 <input
                   type="password"
-                  class="form-input"
+                  class="input"
                   .value=${this.confirmPassword}
                   @input=${(e: InputEvent) => this.confirmPassword = (e.target as HTMLInputElement).value}
                   placeholder="비밀번호를 다시 입력하세요"
@@ -284,7 +248,7 @@ export class LoginScreen extends LitElement {
               </div>
             ` : ''}
 
-            <button type="submit" class="submit-button">
+            <button type="submit" class="btn btn-primary btn-full btn-lg">
               ${this.isLogin ? '로그인' : '회원가입'}
             </button>
           </form>
