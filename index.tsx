@@ -19,6 +19,7 @@ export class GdmLiveAudio extends LitElement {
   @state() currentSessionId = 1;
   @state() currentQuestionIndex = 0;
   @state() conversationHistory: {speaker: 'ai' | 'user', text: string, timestamp: Date}[] = [];
+  @state() isSessionConnected = false;
 
   private client: GoogleGenAI;
   private session: Session | null = null;
@@ -254,12 +255,16 @@ export class GdmLiveAudio extends LitElement {
 
   private async initSession() {
     const model = 'gemini-2.5-flash-preview-native-audio-dialog';
+    
+    // 초기화 시 연결 상태를 false로 설정
+    this.isSessionConnected = false;
 
     try {
       this.session = await this.client.live.connect({
         model: model,
         callbacks: {
           onopen: () => {
+            this.isSessionConnected = true;
             this.updateStatus('세션이 연결되었습니다.');
             // AI가 먼저 인사하도록 첫 메시지 전송
             this.sendFirstGreeting();
@@ -323,10 +328,14 @@ export class GdmLiveAudio extends LitElement {
             }
           },
           onerror: (e: ErrorEvent) => {
-            this.updateError(e.message);
+            this.isSessionConnected = false;
+            this.updateError(`연결 오류: ${e.message}`);
+            console.error('Session error:', e);
           },
           onclose: (e: CloseEvent) => {
-            this.updateStatus('Close:' + e.reason);
+            this.isSessionConnected = false;
+            this.updateStatus(`연결이 종료되었습니다: ${e.reason}`);
+            console.log('Session closed:', e.reason);
           },
         },
         config: {
@@ -346,6 +355,8 @@ export class GdmLiveAudio extends LitElement {
         },
       });
     } catch (e) {
+      this.isSessionConnected = false;
+      this.session = null;
       console.error('세션 초기화 실패:', e);
       this.updateError(`세션 연결에 실패했습니다: ${e.message}`);
     }
@@ -390,11 +401,24 @@ export class GdmLiveAudio extends LitElement {
 
       this.scriptProcessorNode.onaudioprocess = (audioProcessingEvent) => {
         if (!this.isRecording) return;
+        
+        // 세션 유효성 검사
+        if (!this.isSessionValid()) {
+          console.warn('세션이 유효하지 않아 오디오 전송을 중단합니다.');
+          this.stopRecording();
+          return;
+        }
 
         const inputBuffer = audioProcessingEvent.inputBuffer;
         const pcmData = inputBuffer.getChannelData(0);
 
-        this.session.sendRealtimeInput({media: createBlob(pcmData)});
+        try {
+          this.session.sendRealtimeInput({media: createBlob(pcmData)});
+        } catch (error) {
+          console.error('오디오 전송 오류:', error);
+          this.stopRecording();
+          this.updateError('오디오 전송 중 오류가 발생했습니다.');
+        }
       };
 
       this.sourceNode.connect(this.scriptProcessorNode);
@@ -430,23 +454,35 @@ export class GdmLiveAudio extends LitElement {
   }
 
   private sendFirstGreeting() {
-    if (!this.session) return;
+    if (!this.isSessionValid()) {
+      console.warn('세션이 유효하지 않아 첫 인사를 보낼 수 없습니다.');
+      return;
+    }
     
     const currentSession = interviewConfig.sessions[this.currentSessionId];
     const greetingMessage = `안녕하세요, 어르신의 소중한 인생 이야기를 귀담아듣고 아름다운 자서전으로 기록해 드릴 '기억의 안내자'입니다. 제가 곁에서 길잡이가 되어드릴 테니, 그저 오랜 친구에게 이야기하듯 편안한 마음으로 함께해 주시면 됩니다. 오늘은 "${currentSession?.title || ''}"에 대해 이야기를 나눠보고자 합니다. 준비되셨을 때 편하게 말씀해주세요.`;
     
-    // 텍스트 메시지 전송하여 AI가 첫 인사를 하도록 함
-    this.session.send({
-      clientContent: {
-        turns: [{
-          role: 'user',
-          parts: [{
-            text: '세션을 시작해주세요.'
-          }]
-        }],
-        turnComplete: true
-      }
-    });
+    try {
+      // 텍스트 메시지 전송하여 AI가 첫 인사를 하도록 함
+      this.session.send({
+        clientContent: {
+          turns: [{
+            role: 'user',
+            parts: [{
+              text: '세션을 시작해주세요.'
+            }]
+          }],
+          turnComplete: true
+        }
+      });
+    } catch (error) {
+      console.error('첫 인사 전송 오류:', error);
+      this.updateError('첫 인사를 보내는 중 오류가 발생했습니다.');
+    }
+  }
+
+  private isSessionValid(): boolean {
+    return this.session !== null && this.isSessionConnected;
   }
 
   private addToConversation(speaker: 'ai' | 'user', text: string) {
@@ -504,16 +540,29 @@ export class GdmLiveAudio extends LitElement {
 
   private async reset() {
     try {
+      // 먼저 녹음 중지
+      if (this.isRecording) {
+        this.stopRecording();
+      }
+      
+      // 세션 닫기
       if (this.session) {
+        this.isSessionConnected = false;
         this.session.close();
         this.session = null;
       }
+      
       this.conversationHistory = []; // 대화 기록 초기화
       this.updateStatus('세션을 재시작하는 중...');
+      
+      // 잠시 대기 후 재연결
+      await new Promise(resolve => setTimeout(resolve, 1000));
       await this.initSession();
+      
       this.updateStatus('세션이 재시작되었습니다.');
     } catch (e) {
-      this.updateError('세션 재시작에 실패했습니다.');
+      console.error('Reset error:', e);
+      this.updateError(`세션 재시작에 실패했습니다: ${e.message}`);
     }
   }
 
@@ -545,6 +594,9 @@ export class GdmLiveAudio extends LitElement {
         <div class="session-info">
           <h3>세션 ${this.currentSessionId}: ${currentSession?.title || ''}</h3>
           <p>질문 ${this.currentQuestionIndex + 1} / ${currentSession?.questions.length || 0}</p>
+          <p style="font-size: 12px; color: ${this.isSessionConnected ? '#4CAF50' : '#f44336'};">
+            ${this.isSessionConnected ? '🟢 연결됨' : '🔴 연결 끊어짐'}
+          </p>
         </div>
         
         <div class="session-controls">
@@ -589,7 +641,7 @@ export class GdmLiveAudio extends LitElement {
           <button
             id="startButton"
             @click=${this.startRecording}
-            ?disabled=${this.isRecording}>
+            ?disabled=${this.isRecording || !this.isSessionConnected}>
             <svg
               viewBox="0 0 100 100"
               width="32px"
