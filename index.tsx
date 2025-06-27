@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {GoogleGenAI, LiveServerMessage, Modality, Session} from '@google/genai';
+import {GoogleGenAI, LiveServerMessage, Modality, Session, MediaResolution} from '@google/genai';
 import {LitElement, css, html} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import {createBlob, decode, decodeAudioData} from './utils';
@@ -357,10 +357,22 @@ export class GdmLiveAudio extends LitElement {
         },
         config: {
           responseModalities: [Modality.AUDIO, Modality.TEXT],
-          systemInstruction: interviewConfig.systemInstruction + this.getCurrentSessionPrompt(),
+          mediaResolution: MediaResolution.MEDIA_RESOLUTION_MEDIUM,
           speechConfig: {
-            voiceConfig: {prebuiltVoiceConfig: {voiceName: 'Leda'}},
-            languageCode: 'ko-KR'
+            voiceConfig: {
+              prebuiltVoiceConfig: {
+                voiceName: 'Leda',
+              }
+            }
+          },
+          contextWindowCompression: {
+            triggerTokens: '25600',
+            slidingWindow: { targetTokens: '12800' },
+          },
+          systemInstruction: {
+            parts: [{
+              text: interviewConfig.systemInstruction + this.getCurrentSessionPrompt()
+            }]
           },
         },
       });
