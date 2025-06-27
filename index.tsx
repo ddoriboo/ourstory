@@ -356,8 +356,7 @@ export class GdmLiveAudio extends LitElement {
           },
         },
         config: {
-          responseModalities: [Modality.AUDIO, Modality.TEXT],
-          mediaResolution: MediaResolution.MEDIA_RESOLUTION_MEDIUM,
+          responseModalities: [Modality.AUDIO],
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: {
@@ -365,13 +364,9 @@ export class GdmLiveAudio extends LitElement {
               }
             }
           },
-          contextWindowCompression: {
-            triggerTokens: '25600',
-            slidingWindow: { targetTokens: '12800' },
-          },
           systemInstruction: {
             parts: [{
-              text: interviewConfig.systemInstruction + this.getCurrentSessionPrompt()
+              text: "당신은 '기억의 안내자'입니다. 한국어로 극존칭을 사용해 어르신과 따뜻하게 대화해주세요."
             }]
           },
         },
