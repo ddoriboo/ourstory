@@ -341,13 +341,10 @@ export class GdmLiveAudio extends LitElement {
         config: {
           responseModalities: [Modality.AUDIO, Modality.TEXT],
           systemInstruction: interviewConfig.systemInstruction + this.getCurrentSessionPrompt(),
-          generationConfig: {
-            maxOutputTokens: 2048,
-            temperature: 0.8,
-            topP: 0.95,
-            topK: 40,
-            candidateCount: 1,
-          },
+          maxOutputTokens: 2048,
+          temperature: 0.8,
+          topP: 0.95,
+          topK: 40,
           speechConfig: {
             voiceConfig: {prebuiltVoiceConfig: {voiceName: 'Leda'}},
             languageCode: 'ko-KR'
@@ -450,7 +447,7 @@ export class GdmLiveAudio extends LitElement {
     return `\n\n### 현재 세션: ${currentSession.title}\n\n` +
            `현재 진행 중인 세션의 주요 질문들:\n` +
            currentSession.questions.map((q, i) => `${i + 1}. ${q}`).join('\n') +
-           `\n\n첫 번째 질문부터 시작해주세요.`;
+           `\n\n**중요:** 세션이 시작되면 즉시 다음과 같이 인사해주세요: "안녕하세요, 어르신의 소중한 인생 이야기를 귀담아듣고 아름다운 자서전으로 기록해 드릴 '기억의 안내자'입니다. 제가 곁에서 길잡이가 되어드릴 테니, 그저 오랜 친구에게 이야기하듯 편안한 마음으로 함께해 주시면 됩니다. 오늘은 '${currentSession.title}'에 대해 이야기를 나눠보고자 합니다. 준비되셨을 때 편하게 말씀해주세요." 그리고 첫 번째 질문부터 시작해주세요.`;
   }
 
   private sendFirstGreeting() {
@@ -459,27 +456,25 @@ export class GdmLiveAudio extends LitElement {
       return;
     }
     
-    const currentSession = interviewConfig.sessions[this.currentSessionId];
-    const greetingMessage = `안녕하세요, 어르신의 소중한 인생 이야기를 귀담아듣고 아름다운 자서전으로 기록해 드릴 '기억의 안내자'입니다. 제가 곁에서 길잡이가 되어드릴 테니, 그저 오랜 친구에게 이야기하듯 편안한 마음으로 함께해 주시면 됩니다. 오늘은 "${currentSession?.title || ''}"에 대해 이야기를 나눠보고자 합니다. 준비되셨을 때 편하게 말씀해주세요.`;
-    
     try {
-      // 텍스트 메시지 전송하여 AI가 첫 인사를 하도록 함
-      this.session.send({
-        clientContent: {
-          turns: [{
-            role: 'user',
-            parts: [{
-              text: '세션을 시작해주세요.'
-            }]
-          }],
-          turnComplete: true
+      // Live API에서는 사용자가 먼저 입력을 해야 응답을 시작함
+      // 짧은 텍스트 입력으로 대화를 시작하도록 유도
+      setTimeout(() => {
+        if (this.isSessionValid()) {
+          // 간단한 무음 신호를 통해 대화 시작을 유도
+          const silentBuffer = new Float32Array(1024); // 짧은 무음 버퍼
+          this.session?.sendRealtimeInput({media: createBlob(silentBuffer)});
+          console.log('AI 대화 시작을 위한 신호를 보냈습니다.');
         }
-      });
+      }, 1000);
+      
+      this.updateStatus('AI가 인사를 준비 중입니다...');
     } catch (error) {
-      console.error('첫 인사 전송 오류:', error);
-      this.updateError('첫 인사를 보내는 중 오류가 발생했습니다.');
+      console.error('첫 인사 준비 오류:', error);
+      this.updateError('첫 인사를 준비하는 중 오류가 발생했습니다.');
     }
   }
+
 
   private isSessionValid(): boolean {
     return this.session !== null && this.isSessionConnected;
