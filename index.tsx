@@ -23,9 +23,15 @@ export class GdmLiveAudio extends LitElement {
   private client: GoogleGenAI;
   private session: Session | null = null;
   private inputAudioContext = new (window.AudioContext ||
-    window.webkitAudioContext)({sampleRate: 16000});
+    window.webkitAudioContext)({
+      sampleRate: 16000,
+      latencyHint: 'interactive'
+    });
   private outputAudioContext = new (window.AudioContext ||
-    window.webkitAudioContext)({sampleRate: 24000});
+    window.webkitAudioContext)({
+      sampleRate: 24000,
+      latencyHint: 'interactive'
+    });
   @state() inputNode = this.inputAudioContext.createGain();
   @state() outputNode = this.outputAudioContext.createGain();
   private nextStartTime = 0;
@@ -272,27 +278,39 @@ export class GdmLiveAudio extends LitElement {
               message.serverContent?.modelTurn?.parts[0]?.inlineData;
 
             if (audio) {
-              this.nextStartTime = Math.max(
-                this.nextStartTime,
-                this.outputAudioContext.currentTime,
-              );
+              try {
+                // 더 부드러운 오디오 재생을 위한 시간 계산
+                this.nextStartTime = Math.max(
+                  this.nextStartTime,
+                  this.outputAudioContext.currentTime + 0.01, // 약간의 버퍼 시간 추가
+                );
 
-              const audioBuffer = await decodeAudioData(
-                decode(audio.data),
-                this.outputAudioContext,
-                24000,
-                1,
-              );
-              const source = this.outputAudioContext.createBufferSource();
-              source.buffer = audioBuffer;
-              source.connect(this.outputNode);
-              source.addEventListener('ended', () =>{
-                this.sources.delete(source);
-              });
+                const audioBuffer = await decodeAudioData(
+                  decode(audio.data),
+                  this.outputAudioContext,
+                  24000,
+                  1,
+                );
+                
+                const source = this.outputAudioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                
+                // 더 나은 오디오 품질을 위한 gain 조정
+                const gainNode = this.outputAudioContext.createGain();
+                gainNode.gain.value = 1.0;
+                source.connect(gainNode);
+                gainNode.connect(this.outputNode);
+                
+                source.addEventListener('ended', () => {
+                  this.sources.delete(source);
+                });
 
-              source.start(this.nextStartTime);
-              this.nextStartTime = this.nextStartTime + audioBuffer.duration;
-              this.sources.add(source);
+                source.start(this.nextStartTime);
+                this.nextStartTime = this.nextStartTime + audioBuffer.duration;
+                this.sources.add(source);
+              } catch (audioError) {
+                console.error('Audio processing error:', audioError);
+              }
             }
 
             const interrupted = message.serverContent?.interrupted;
@@ -314,6 +332,13 @@ export class GdmLiveAudio extends LitElement {
         config: {
           responseModalities: [Modality.AUDIO, Modality.TEXT],
           systemInstruction: interviewConfig.systemInstruction + this.getCurrentSessionPrompt(),
+          generationConfig: {
+            maxOutputTokens: 2048,
+            temperature: 0.8,
+            topP: 0.95,
+            topK: 40,
+            candidateCount: 1,
+          },
           speechConfig: {
             voiceConfig: {prebuiltVoiceConfig: {voiceName: 'Leda'}},
             languageCode: 'ko-KR'
@@ -356,7 +381,7 @@ export class GdmLiveAudio extends LitElement {
       );
       this.sourceNode.connect(this.inputNode);
 
-      const bufferSize = 256;
+      const bufferSize = 512; // 더 큰 버퍼 크기로 안정성 향상
       this.scriptProcessorNode = this.inputAudioContext.createScriptProcessor(
         bufferSize,
         1,
