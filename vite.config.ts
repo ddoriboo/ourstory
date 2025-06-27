@@ -12,6 +12,12 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
+      },
+      preview: {
+        allowedHosts: ['ourstory-production.up.railway.app', '.railway.app']
+      },
+      server: {
+        host: true
       }
     };
 });
