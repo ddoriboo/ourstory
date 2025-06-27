@@ -18,6 +18,7 @@ export class GdmLiveAudio extends LitElement {
   @state() error = '';
   @state() currentSessionId = 1;
   @state() currentQuestionIndex = 0;
+  @state() conversationHistory: {speaker: 'ai' | 'user', text: string, timestamp: Date}[] = [];
 
   private client: GoogleGenAI;
   private session: Session | null = null;
@@ -32,6 +33,8 @@ export class GdmLiveAudio extends LitElement {
   private sourceNode: AudioBufferSourceNode;
   private scriptProcessorNode: ScriptProcessorNode;
   private sources = new Set<AudioBufferSourceNode>();
+  private speechRecognition: any;
+  private isTranscribing = false;
 
   static styles = css`
     #status {
@@ -94,6 +97,66 @@ export class GdmLiveAudio extends LitElement {
       cursor: not-allowed;
     }
 
+    .conversation-panel {
+      position: fixed;
+      left: 20px;
+      bottom: 20vh;
+      top: 120px;
+      width: 400px;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      border-radius: 10px;
+      padding: 20px;
+      overflow-y: auto;
+      z-index: 5;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .conversation-panel h4 {
+      margin: 0 0 15px 0;
+      color: #4CAF50;
+      font-size: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      padding-bottom: 10px;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      padding: 10px;
+      border-radius: 8px;
+      line-height: 1.4;
+      font-size: 14px;
+    }
+
+    .message.ai {
+      background: rgba(76, 175, 80, 0.2);
+      border-left: 3px solid #4CAF50;
+    }
+
+    .message.user {
+      background: rgba(33, 150, 243, 0.2);
+      border-left: 3px solid #2196F3;
+    }
+
+    .message-header {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .message-text {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .timestamp {
+      font-size: 10px;
+      opacity: 0.5;
+      margin-top: 5px;
+    }
+
     .controls {
       z-index: 10;
       position: absolute;
@@ -133,10 +196,42 @@ export class GdmLiveAudio extends LitElement {
   constructor() {
     super();
     this.initClient();
+    this.initSpeechRecognition();
   }
 
   private initAudio() {
     this.nextStartTime = this.outputAudioContext.currentTime;
+  }
+
+  private initSpeechRecognition() {
+    // Web Speech API 지원 확인
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    
+    if (SpeechRecognition) {
+      this.speechRecognition = new SpeechRecognition();
+      this.speechRecognition.continuous = true;
+      this.speechRecognition.interimResults = false;
+      this.speechRecognition.lang = 'ko-KR';
+      
+      this.speechRecognition.onresult = (event: any) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            const transcript = event.results[i][0].transcript;
+            this.addToConversation('user', transcript);
+          }
+        }
+      };
+      
+      this.speechRecognition.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+      };
+      
+      this.speechRecognition.onend = () => {
+        this.isTranscribing = false;
+      };
+    } else {
+      console.warn('Web Speech API not supported');
+    }
   }
 
   private async initClient() {
@@ -159,9 +254,20 @@ export class GdmLiveAudio extends LitElement {
         model: model,
         callbacks: {
           onopen: () => {
-            this.updateStatus('Opened');
+            this.updateStatus('세션이 연결되었습니다.');
+            // AI가 먼저 인사하도록 첫 메시지 전송
+            this.sendFirstGreeting();
           },
           onmessage: async (message: LiveServerMessage) => {
+            // 텍스트 응답 처리
+            const textPart = message.serverContent?.modelTurn?.parts?.find(
+              part => part.text && part.text.trim()
+            );
+            if (textPart?.text) {
+              this.addToConversation('ai', textPart.text);
+            }
+
+            // 오디오 응답 처리
             const audio =
               message.serverContent?.modelTurn?.parts[0]?.inlineData;
 
@@ -206,7 +312,7 @@ export class GdmLiveAudio extends LitElement {
           },
         },
         config: {
-          responseModalities: [Modality.AUDIO],
+          responseModalities: [Modality.AUDIO, Modality.TEXT],
           systemInstruction: interviewConfig.systemInstruction + this.getCurrentSessionPrompt(),
           speechConfig: {
             voiceConfig: {prebuiltVoiceConfig: {voiceName: 'Leda'}},
@@ -271,6 +377,16 @@ export class GdmLiveAudio extends LitElement {
 
       this.isRecording = true;
       this.updateStatus('🔴 Recording... Capturing PCM chunks.');
+      
+      // 음성 인식 시작
+      if (this.speechRecognition && !this.isTranscribing) {
+        try {
+          this.speechRecognition.start();
+          this.isTranscribing = true;
+        } catch (e) {
+          console.error('Speech recognition start error:', e);
+        }
+      }
     } catch (err) {
       console.error('Error starting recording:', err);
       this.updateStatus(`Error: ${err.message}`);
@@ -286,6 +402,45 @@ export class GdmLiveAudio extends LitElement {
            `현재 진행 중인 세션의 주요 질문들:\n` +
            currentSession.questions.map((q, i) => `${i + 1}. ${q}`).join('\n') +
            `\n\n첫 번째 질문부터 시작해주세요.`;
+  }
+
+  private sendFirstGreeting() {
+    if (!this.session) return;
+    
+    const currentSession = interviewConfig.sessions[this.currentSessionId];
+    const greetingMessage = `안녕하세요, 어르신의 소중한 인생 이야기를 귀담아듣고 아름다운 자서전으로 기록해 드릴 '기억의 안내자'입니다. 제가 곁에서 길잡이가 되어드릴 테니, 그저 오랜 친구에게 이야기하듯 편안한 마음으로 함께해 주시면 됩니다. 오늘은 "${currentSession?.title || ''}"에 대해 이야기를 나눠보고자 합니다. 준비되셨을 때 편하게 말씀해주세요.`;
+    
+    // 텍스트 메시지 전송하여 AI가 첫 인사를 하도록 함
+    this.session.send({
+      clientContent: {
+        turns: [{
+          role: 'user',
+          parts: [{
+            text: '세션을 시작해주세요.'
+          }]
+        }],
+        turnComplete: true
+      }
+    });
+  }
+
+  private addToConversation(speaker: 'ai' | 'user', text: string) {
+    this.conversationHistory = [
+      ...this.conversationHistory,
+      {
+        speaker,
+        text: text.trim(),
+        timestamp: new Date()
+      }
+    ];
+    
+    // 대화가 추가된 후 스크롤을 맨 아래로
+    this.updateComplete.then(() => {
+      const conversationPanel = this.shadowRoot?.querySelector('.conversation-panel');
+      if (conversationPanel) {
+        conversationPanel.scrollTop = conversationPanel.scrollHeight;
+      }
+    });
   }
 
   private stopRecording() {
@@ -310,6 +465,16 @@ export class GdmLiveAudio extends LitElement {
     }
 
     this.updateStatus('Recording stopped. Click Start to begin again.');
+    
+    // 음성 인식 중지
+    if (this.speechRecognition && this.isTranscribing) {
+      try {
+        this.speechRecognition.stop();
+        this.isTranscribing = false;
+      } catch (e) {
+        console.error('Speech recognition stop error:', e);
+      }
+    }
   }
 
   private async reset() {
@@ -318,6 +483,7 @@ export class GdmLiveAudio extends LitElement {
         this.session.close();
         this.session = null;
       }
+      this.conversationHistory = []; // 대화 기록 초기화
       this.updateStatus('세션을 재시작하는 중...');
       await this.initSession();
       this.updateStatus('세션이 재시작되었습니다.');
@@ -363,6 +529,21 @@ export class GdmLiveAudio extends LitElement {
           <button @click=${this.nextSession} ?disabled=${this.currentSessionId >= 12}>
             다음 세션
           </button>
+        </div>
+        
+        <div class="conversation-panel">
+          <h4>🗣️ 대화 기록</h4>
+          ${this.conversationHistory.map(message => html`
+            <div class="message ${message.speaker}">
+              <div class="message-header">
+                ${message.speaker === 'ai' ? '🤖 기억의 안내자' : '👤 어르신'}
+              </div>
+              <div class="message-text">${message.text}</div>
+              <div class="timestamp">
+                ${message.timestamp.toLocaleTimeString('ko-KR')}
+              </div>
+            </div>
+          `)}
         </div>
         
         <div class="controls">
