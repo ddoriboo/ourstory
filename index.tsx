@@ -248,7 +248,7 @@ export class GdmLiveAudio extends LitElement {
     const apiKey = process.env.GEMINI_API_KEY || 
                   process.env.VITE_GEMINI_API_KEY || 
                   (import.meta as any)?.env?.VITE_GEMINI_API_KEY ||
-                  'AIzaSyCP1jzXV2kYfbMv7UnntKm1OKfwHXydPTA'; // 폴백으로 직접 설정
+                  'AIzaSyBn158ydMQWCNHWxy2HSPHDZC3Snms2n0w'; // 새로운 API 키로 폴백
     
     console.log('환경 변수들:', {
       'process.env.GEMINI_API_KEY': process.env.GEMINI_API_KEY ? 'defined' : 'undefined',
