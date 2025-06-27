@@ -20,7 +20,7 @@ export class GdmLiveAudio extends LitElement {
   @state() currentQuestionIndex = 0;
 
   private client: GoogleGenAI;
-  private session: Session;
+  private session: Session | null = null;
   private inputAudioContext = new (window.AudioContext ||
     window.webkitAudioContext)({sampleRate: 16000});
   private outputAudioContext = new (window.AudioContext ||
@@ -157,13 +157,6 @@ export class GdmLiveAudio extends LitElement {
     try {
       this.session = await this.client.live.connect({
         model: model,
-        systemInstruction: {
-          parts: [
-            {
-              text: interviewConfig.systemInstruction + this.getCurrentSessionPrompt()
-            }
-          ]
-        },
         callbacks: {
           onopen: () => {
             this.updateStatus('Opened');
@@ -214,6 +207,7 @@ export class GdmLiveAudio extends LitElement {
         },
         config: {
           responseModalities: [Modality.AUDIO],
+          systemInstruction: interviewConfig.systemInstruction + this.getCurrentSessionPrompt(),
           speechConfig: {
             voiceConfig: {prebuiltVoiceConfig: {voiceName: 'Leda'}},
             languageCode: 'ko-KR'
@@ -221,7 +215,8 @@ export class GdmLiveAudio extends LitElement {
         },
       });
     } catch (e) {
-      console.error(e);
+      console.error('세션 초기화 실패:', e);
+      this.updateError(`세션 연결에 실패했습니다: ${e.message}`);
     }
   }
 
@@ -317,27 +312,37 @@ export class GdmLiveAudio extends LitElement {
     this.updateStatus('Recording stopped. Click Start to begin again.');
   }
 
-  private reset() {
-    this.session?.close();
-    this.initSession();
-    this.updateStatus('Session cleared.');
-  }
-
-  private nextSession() {
-    if (this.currentSessionId < 12) {
-      this.currentSessionId++;
-      this.currentQuestionIndex = 0;
-      this.reset();
-      this.updateStatus(`세션 ${this.currentSessionId}로 이동했습니다.`);
+  private async reset() {
+    try {
+      if (this.session) {
+        this.session.close();
+        this.session = null;
+      }
+      this.updateStatus('세션을 재시작하는 중...');
+      await this.initSession();
+      this.updateStatus('세션이 재시작되었습니다.');
+    } catch (e) {
+      this.updateError('세션 재시작에 실패했습니다.');
     }
   }
 
-  private previousSession() {
+  private async nextSession() {
+    if (this.currentSessionId < 12) {
+      this.currentSessionId++;
+      this.currentQuestionIndex = 0;
+      this.updateStatus(`세션 ${this.currentSessionId}로 이동 중...`);
+      await this.reset();
+      this.updateStatus(`세션 ${this.currentSessionId}: ${interviewConfig.sessions[this.currentSessionId]?.title || ''}`);
+    }
+  }
+
+  private async previousSession() {
     if (this.currentSessionId > 1) {
       this.currentSessionId--;
       this.currentQuestionIndex = 0;
-      this.reset();
-      this.updateStatus(`세션 ${this.currentSessionId}로 이동했습니다.`);
+      this.updateStatus(`세션 ${this.currentSessionId}로 이동 중...`);
+      await this.reset();
+      this.updateStatus(`세션 ${this.currentSessionId}: ${interviewConfig.sessions[this.currentSessionId]?.title || ''}`);
     }
   }
 
@@ -403,7 +408,7 @@ export class GdmLiveAudio extends LitElement {
           </button>
         </div>
 
-        <div id="status"> ${this.error} </div>
+        <div id="status"> ${this.error || this.status} </div>
         <gdm-live-audio-visuals-3d
           .inputNode=${this.inputNode}
           .outputNode=${this.outputNode}></gdm-live-audio-visuals-3d>
