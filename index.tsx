@@ -9,12 +9,15 @@ import {LitElement, css, html} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import {createBlob, decode, decodeAudioData} from './utils';
 import './visual-3d';
+import {interviewConfig} from './interviewConfig';
 
 @customElement('gdm-live-audio')
 export class GdmLiveAudio extends LitElement {
   @state() isRecording = false;
   @state() status = '';
   @state() error = '';
+  @state() currentSessionId = 1;
+  @state() currentQuestionIndex = 0;
 
   private client: GoogleGenAI;
   private session: Session;
@@ -38,6 +41,57 @@ export class GdmLiveAudio extends LitElement {
       right: 0;
       z-index: 10;
       text-align: center;
+    }
+
+    .session-info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      color: white;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+    }
+
+    .session-info h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+
+    .session-info p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .session-controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      display: flex;
+      gap: 10px;
+    }
+
+    .session-controls button {
+      padding: 8px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .session-controls button:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .session-controls button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .controls {
@@ -103,6 +157,13 @@ export class GdmLiveAudio extends LitElement {
     try {
       this.session = await this.client.live.connect({
         model: model,
+        systemInstruction: {
+          parts: [
+            {
+              text: interviewConfig.systemInstruction + this.getCurrentSessionPrompt()
+            }
+          ]
+        },
         callbacks: {
           onopen: () => {
             this.updateStatus('Opened');
@@ -154,8 +215,8 @@ export class GdmLiveAudio extends LitElement {
         config: {
           responseModalities: [Modality.AUDIO],
           speechConfig: {
-            voiceConfig: {prebuiltVoiceConfig: {voiceName: 'Orus'}},
-            // languageCode: 'en-GB'
+            voiceConfig: {prebuiltVoiceConfig: {voiceName: 'Leda'}},
+            languageCode: 'ko-KR'
           },
         },
       });
@@ -222,6 +283,16 @@ export class GdmLiveAudio extends LitElement {
     }
   }
 
+  private getCurrentSessionPrompt() {
+    const currentSession = interviewConfig.sessions[this.currentSessionId];
+    if (!currentSession) return '';
+    
+    return `\n\n### 현재 세션: ${currentSession.title}\n\n` +
+           `현재 진행 중인 세션의 주요 질문들:\n` +
+           currentSession.questions.map((q, i) => `${i + 1}. ${q}`).join('\n') +
+           `\n\n첫 번째 질문부터 시작해주세요.`;
+  }
+
   private stopRecording() {
     if (!this.isRecording && !this.mediaStream && !this.inputAudioContext)
       return;
@@ -252,9 +323,43 @@ export class GdmLiveAudio extends LitElement {
     this.updateStatus('Session cleared.');
   }
 
+  private nextSession() {
+    if (this.currentSessionId < 12) {
+      this.currentSessionId++;
+      this.currentQuestionIndex = 0;
+      this.reset();
+      this.updateStatus(`세션 ${this.currentSessionId}로 이동했습니다.`);
+    }
+  }
+
+  private previousSession() {
+    if (this.currentSessionId > 1) {
+      this.currentSessionId--;
+      this.currentQuestionIndex = 0;
+      this.reset();
+      this.updateStatus(`세션 ${this.currentSessionId}로 이동했습니다.`);
+    }
+  }
+
   render() {
+    const currentSession = interviewConfig.sessions[this.currentSessionId];
+    
     return html`
       <div>
+        <div class="session-info">
+          <h3>세션 ${this.currentSessionId}: ${currentSession?.title || ''}</h3>
+          <p>질문 ${this.currentQuestionIndex + 1} / ${currentSession?.questions.length || 0}</p>
+        </div>
+        
+        <div class="session-controls">
+          <button @click=${this.previousSession} ?disabled=${this.currentSessionId <= 1}>
+            이전 세션
+          </button>
+          <button @click=${this.nextSession} ?disabled=${this.currentSessionId >= 12}>
+            다음 세션
+          </button>
+        </div>
+        
         <div class="controls">
           <button
             id="resetButton"
