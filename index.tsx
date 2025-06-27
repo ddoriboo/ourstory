@@ -284,7 +284,17 @@ export class GdmLiveAudio extends LitElement {
         callbacks: {
           onopen: () => {
             this.isSessionConnected = true;
-            this.updateStatus('🎤 녹음 버튼을 눌러 대화를 시작하세요.');
+            this.updateStatus('🎤 AI가 인사를 준비하고 있습니다...');
+            
+            // 세션 연결 후 잠시 대기 후 AI가 먼저 인사하도록 텍스트 메시지 전송
+            setTimeout(() => {
+              if (this.session && this.isSessionConnected) {
+                this.session.sendRealtimeInput({
+                  text: "안녕하세요. 지금부터 인터뷰를 시작하겠습니다. 먼저 인사를 해주세요."
+                });
+                this.updateStatus('🎤 AI가 인사를 시작했습니다. 녹음 버튼을 눌러 응답해주세요.');
+              }
+            }, 1000);
           },
           onmessage: async (message: LiveServerMessage) => {
             // 텍스트 응답 처리
@@ -366,7 +376,7 @@ export class GdmLiveAudio extends LitElement {
           },
           systemInstruction: {
             parts: [{
-              text: "당신은 '기억의 안내자'입니다. 한국어로 극존칭을 사용해 어르신과 따뜻하게 대화해주세요."
+              text: interviewConfig.systemInstruction + this.getCurrentSessionPrompt()
             }]
           },
         },
@@ -464,10 +474,71 @@ export class GdmLiveAudio extends LitElement {
     const currentSession = interviewConfig.sessions[this.currentSessionId];
     if (!currentSession) return '';
     
-    return `\n\n### 현재 세션: ${currentSession.title}\n\n` +
-           `현재 진행 중인 세션의 주요 질문들:\n` +
-           currentSession.questions.map((q, i) => `${i + 1}. ${q}`).join('\n') +
-           `\n\n**중요:** 세션이 시작되면 즉시 다음과 같이 인사해주세요: "안녕하세요, 어르신의 소중한 인생 이야기를 귀담아듣고 아름다운 자서전으로 기록해 드릴 '기억의 안내자'입니다. 제가 곁에서 길잡이가 되어드릴 테니, 그저 오랜 친구에게 이야기하듯 편안한 마음으로 함께해 주시면 됩니다. 오늘은 '${currentSession.title}'에 대해 이야기를 나눠보고자 합니다. 준비되셨을 때 편하게 말씀해주세요." 그리고 첫 번째 질문부터 시작해주세요.`;
+    const currentQuestion = currentSession.questions[this.currentQuestionIndex];
+    
+    return `
+
+### 현재 세션: ${currentSession.title}
+
+**현재 진행해야 할 질문 (${this.currentQuestionIndex + 1}/${currentSession.questions.length}):**
+${currentQuestion}
+
+**세션의 모든 질문 목록 (참고용):**
+${currentSession.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
+
+**핵심 진행 원칙:**
+- 당신은 인터뷰를 주도하는 인터뷰어입니다. 어르신의 답변을 기다리되, 대화의 흐름을 적극적으로 이끌어야 합니다.
+- 매 응답마다 충분한 길이(3-6문장)로 말하세요. 너무 짧게 답하지 마세요.
+- 어르신이 침묵하거나 답변을 주저하시면 격려하고 다시 질문하세요.
+
+**현재 진행 단계:**
+${this.currentQuestionIndex === 0 ? '⭐ 세션 시작 단계' : `✨ 질문 ${this.currentQuestionIndex + 1} 단계`}
+
+**즉시 해야 할 행동:**
+${this.currentQuestionIndex === 0 ? 
+  `1. 따뜻한 인사: "안녕하세요, 어르신! 어르신의 소중한 인생 이야기를 귀담아듣고 아름다운 자서전으로 기록해 드릴 '기억의 안내자'입니다. 오늘은 '${currentSession.title}'에 대해 이야기를 나눠보려 합니다. 편안한 마음으로 함께해 주시면 됩니다."
+2. 첫 번째 질문 즉시 시작: "${currentQuestion}"` :
+  `현재 질문에 집중: "${currentQuestion}"`
+}
+
+**대화 진행 가이드:**
+- 어르신의 답변에 3-4문장으로 충분히 반응하고 공감하세요
+- 1-2개의 구체적인 꼬리 질문으로 더 깊은 이야기를 이끌어내세요
+- 한 질문당 5-10분 정도 충분히 대화한 후 다음으로 넘어가세요
+- 자연스럽게 다음 질문으로 전환할 때: "정말 소중한 이야기 감사합니다. 이제 다음 질문을 드려볼게요."
+`;
+  }
+
+  private nextQuestion() {
+    const currentSession = interviewConfig.sessions[this.currentSessionId];
+    if (currentSession && this.currentQuestionIndex < currentSession.questions.length - 1) {
+      this.currentQuestionIndex++;
+      this.updateStatus(`질문 ${this.currentQuestionIndex + 1}/${currentSession.questions.length}로 진행`);
+      
+      // AI에게 다음 질문으로 넘어가라는 지시 전송
+      if (this.session && this.isSessionConnected) {
+        const newQuestion = currentSession.questions[this.currentQuestionIndex];
+        this.session.sendRealtimeInput({
+          text: `이제 다음 질문으로 넘어가세요. 질문 ${this.currentQuestionIndex + 1}번: "${newQuestion}"을 어르신께 해주세요.`
+        });
+      }
+    }
+  }
+
+  private previousQuestion() {
+    if (this.currentQuestionIndex > 0) {
+      this.currentQuestionIndex--;
+      const currentSession = interviewConfig.sessions[this.currentSessionId];
+      this.updateStatus(`질문 ${this.currentQuestionIndex + 1}/${currentSession?.questions.length || 0}로 돌아감`);
+      
+      // AI에게 이전 질문으로 돌아가라는 지시 전송
+      if (this.session && this.isSessionConnected && currentSession) {
+        const newQuestion = currentSession.questions[this.currentQuestionIndex];
+        this.session.sendRealtimeInput({
+          text: `이전 질문으로 돌아가겠습니다. 질문 ${this.currentQuestionIndex + 1}번: "${newQuestion}"에 대해 다시 이야기해보세요.`
+        });
+      }
+    }
   }
 
 
@@ -585,6 +656,10 @@ export class GdmLiveAudio extends LitElement {
         <div class="session-info">
           <h3>세션 ${this.currentSessionId}: ${currentSession?.title || ''}</h3>
           <p>질문 ${this.currentQuestionIndex + 1} / ${currentSession?.questions.length || 0}</p>
+          <p style="font-size: 12px; margin-top: 10px; padding: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; line-height: 1.3;">
+            <strong>현재 질문:</strong><br>
+            ${currentSession?.questions[this.currentQuestionIndex] || '질문을 불러오는 중...'}
+          </p>
           <p style="font-size: 12px; color: ${this.isSessionConnected ? '#4CAF50' : '#f44336'};">
             ${this.isSessionConnected ? '🟢 연결됨' : '🔴 연결 끊어짐'}
           </p>
@@ -596,6 +671,12 @@ export class GdmLiveAudio extends LitElement {
           </button>
           <button @click=${this.nextSession} ?disabled=${this.currentSessionId >= 12}>
             다음 세션
+          </button>
+          <button @click=${this.previousQuestion} ?disabled=${this.currentQuestionIndex <= 0}>
+            이전 질문
+          </button>
+          <button @click=${this.nextQuestion} ?disabled=${this.currentQuestionIndex >= (interviewConfig.sessions[this.currentSessionId]?.questions.length || 1) - 1}>
+            다음 질문
           </button>
         </div>
         
