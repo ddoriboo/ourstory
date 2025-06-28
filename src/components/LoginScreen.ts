@@ -11,24 +11,19 @@ export class LoginScreen extends LitElement {
 
   static styles = css`
     :host {
-      display: block;
-      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       min-height: 100vh;
       background: var(--color-background);
-      padding: var(--spacing-6);
-      box-sizing: border-box;
+      padding: var(--spacing-4);
+      width: 100%;
     }
 
     .login-container {
       width: 100%;
-      max-width: none;
-      margin: 0 auto;
-      padding: var(--spacing-8);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 4rem);
+      max-width: 1200px;
+      padding: var(--spacing-6);
     }
 
     .logo {
@@ -60,7 +55,7 @@ export class LoginScreen extends LitElement {
       padding: var(--spacing-20);
       box-shadow: var(--shadow-lg);
       width: 100%;
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
@@ -147,18 +142,18 @@ export class LoginScreen extends LitElement {
 
     @media (max-width: 768px) {
       .form-card {
-        max-width: 90%;
+        max-width: 100%;
         padding: var(--spacing-16);
       }
     }
 
     @media (max-width: 480px) {
       :host {
-        padding: var(--spacing-4);
+        padding: var(--spacing-3);
       }
 
       .login-container {
-        padding: var(--spacing-6);
+        padding: var(--spacing-4);
       }
 
       .logo h1 {
@@ -172,7 +167,7 @@ export class LoginScreen extends LitElement {
       }
 
       .form-card {
-        max-width: 95%;
+        max-width: 100%;
         padding: var(--spacing-12);
       }
     }

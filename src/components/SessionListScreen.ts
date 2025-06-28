@@ -21,11 +21,10 @@ export class SessionListScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
-      width: 100vw;
       min-height: 100vh;
       background: var(--color-background);
       padding: var(--spacing-8);
-      box-sizing: border-box;
+      width: 100%;
     }
 
     .header {
@@ -54,7 +53,9 @@ export class SessionListScreen extends LitElement {
       display: grid;
       gap: var(--spacing-8);
       width: 100%;
-      grid-template-columns: repeat(auto-fill, minmax(min(100%, 500px), 1fr));
+      max-width: 1400px;
+      margin: 0 auto;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
       padding: 0 var(--spacing-4);
     }
 
@@ -210,7 +211,7 @@ export class SessionListScreen extends LitElement {
       .sessions-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-8);
-        padding: 0 var(--spacing-2);
+        padding: 0;
       }
       
       .session-card {
@@ -221,7 +222,7 @@ export class SessionListScreen extends LitElement {
 
     @media (max-width: 480px) {
       :host {
-        padding: var(--spacing-6);
+        padding: var(--spacing-4);
       }
 
       .header {

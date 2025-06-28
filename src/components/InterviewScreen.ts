@@ -53,28 +53,25 @@ export class InterviewScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
-      width: 100vw;
-      height: 100vh;
       background: var(--color-background);
-      box-sizing: border-box;
+      min-height: 100vh;
+      width: 100%;
     }
 
     .interview-container {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      min-height: 100vh;
       width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
       position: relative;
-      overflow: hidden;
     }
 
     .header {
       background: var(--gradient-surface);
       border-bottom: 1px solid var(--color-border-light);
       padding: var(--spacing-8);
-      position: sticky;
-      top: 0;
-      z-index: var(--z-sticky);
       box-shadow: var(--shadow-sm);
       width: 100%;
     }
@@ -161,7 +158,7 @@ export class InterviewScreen extends LitElement {
       flex-direction: column;
       gap: var(--spacing-6);
       background: var(--color-background);
-      width: 100%;
+      min-height: 400px;
     }
 
     .message {
@@ -212,7 +209,6 @@ export class InterviewScreen extends LitElement {
       align-items: center;
       gap: var(--spacing-8);
       box-shadow: var(--shadow-md);
-      width: 100%;
     }
 
     .main-control {
