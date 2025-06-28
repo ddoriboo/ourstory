@@ -45,7 +45,7 @@ export class StoryViewScreen extends LitElement {
 
     .header p {
       color: var(--color-muted-foreground);
-      font-size: 1.125rem;
+      font-size: var(--text-lg);
     }
 
     .view-toggle {
@@ -56,15 +56,16 @@ export class StoryViewScreen extends LitElement {
     }
 
     .toggle-button {
-      padding: 0.75rem 1.5rem;
+      padding: 1.25rem 2rem;
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
       background: var(--color-background);
       color: var(--color-foreground);
-      font-size: 1rem;
+      font-size: var(--text-lg);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      min-height: 60px;
     }
 
     .toggle-button:hover {
@@ -113,14 +114,14 @@ export class StoryViewScreen extends LitElement {
     .session-number {
       background: var(--color-primary);
       color: var(--color-primary-foreground);
-      width: 32px;
-      height: 32px;
+      width: 56px;
+      height: 56px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: var(--text-lg);
       margin-right: 0.75rem;
     }
 
@@ -133,14 +134,14 @@ export class StoryViewScreen extends LitElement {
     }
 
     .session-title {
-      font-size: 1.25rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       margin-bottom: 0.25rem;
       color: var(--color-foreground);
     }
 
     .session-meta {
-      font-size: 0.875rem;
+      font-size: var(--text-base);
       color: var(--color-muted-foreground);
       display: flex;
       gap: 1rem;
@@ -156,14 +157,14 @@ export class StoryViewScreen extends LitElement {
     }
 
     .preview-label {
-      font-size: 0.875rem;
+      font-size: var(--text-base);
       font-weight: 600;
       color: var(--color-muted-foreground);
       margin-bottom: 0.5rem;
     }
 
     .preview-text {
-      font-size: 1rem;
+      font-size: var(--text-lg);
       line-height: 1.5;
       color: var(--color-foreground);
     }
@@ -186,14 +187,20 @@ export class StoryViewScreen extends LitElement {
       background: transparent;
       border: none;
       color: var(--color-primary);
-      font-size: 1.5rem;
+      font-size: var(--text-2xl);
       cursor: pointer;
-      padding: 0.5rem;
+      padding: 1rem;
       margin-right: 1rem;
+      min-width: 60px;
+      min-height: 60px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .detail-title {
-      font-size: 1.5rem;
+      font-size: var(--text-2xl);
       font-weight: 600;
       color: var(--color-foreground);
     }
@@ -223,19 +230,19 @@ export class StoryViewScreen extends LitElement {
     }
 
     .message-header {
-      font-size: 0.75rem;
+      font-size: var(--text-base);
       font-weight: 600;
       opacity: 0.7;
       margin-bottom: 0.25rem;
     }
 
     .message-content {
-      font-size: 1rem;
+      font-size: var(--text-lg);
       line-height: 1.5;
     }
 
     .message-timestamp {
-      font-size: 0.75rem;
+      font-size: var(--text-base);
       opacity: 0.6;
       margin-top: 0.5rem;
     }
@@ -255,13 +262,14 @@ export class StoryViewScreen extends LitElement {
       color: var(--color-accent-foreground);
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
-      padding: 1rem 2rem;
-      font-size: 1.125rem;
+      padding: 1.5rem 2rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       cursor: pointer;
       box-shadow: var(--shadow);
       transition: all 0.2s;
       margin-top: 1rem;
+      min-height: 80px;
     }
 
     .export-button:hover {
@@ -279,11 +287,12 @@ export class StoryViewScreen extends LitElement {
       }
 
       .toggle-button {
-        padding: 0.875rem 1rem;
+        padding: 1.5rem 1.25rem;
+        font-size: var(--text-base);
       }
 
       .session-summary {
-        padding: 1.25rem;
+        padding: 1.5rem;
       }
 
       .detail-view {
@@ -291,8 +300,14 @@ export class StoryViewScreen extends LitElement {
       }
 
       .conversation-message {
-        padding: 1rem;
-        font-size: 0.95rem;
+        padding: 1.25rem;
+        font-size: var(--text-base);
+      }
+      
+      .back-button {
+        padding: 0.75rem;
+        min-width: 60px;
+        min-height: 60px;
       }
     }
   `;

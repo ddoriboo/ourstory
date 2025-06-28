@@ -47,7 +47,7 @@ export class AutobiographyScreen extends LitElement {
 
     .header p {
       color: var(--color-muted-foreground);
-      font-size: 1.125rem;
+      font-size: var(--text-lg);
       line-height: 1.6;
     }
 
@@ -61,7 +61,7 @@ export class AutobiographyScreen extends LitElement {
     }
 
     .stats-title {
-      font-size: 1.25rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       margin-bottom: 1rem;
       color: var(--color-foreground);
@@ -89,7 +89,7 @@ export class AutobiographyScreen extends LitElement {
     }
 
     .stat-label {
-      font-size: 0.875rem;
+      font-size: var(--text-base);
       color: var(--color-muted-foreground);
       font-weight: 600;
     }
@@ -114,7 +114,7 @@ export class AutobiographyScreen extends LitElement {
 
     .generation-header p {
       color: var(--color-muted-foreground);
-      font-size: 1rem;
+      font-size: var(--text-lg);
     }
 
     .generate-button {
@@ -123,17 +123,18 @@ export class AutobiographyScreen extends LitElement {
       color: var(--color-primary-foreground);
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem 2rem;
-      font-size: 1.25rem;
+      padding: 2rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       cursor: pointer;
       box-shadow: var(--shadow);
       transition: all 0.2s;
       margin-bottom: 1rem;
+      min-height: 80px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     .generate-button:hover:not(:disabled) {
@@ -171,24 +172,25 @@ export class AutobiographyScreen extends LitElement {
     }
 
     .api-key-title {
-      font-size: 1rem;
+      font-size: var(--text-lg);
       font-weight: 600;
       margin-bottom: 0.75rem;
     }
 
     .api-key-input {
       width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
+      padding: 1.25rem;
+      font-size: var(--text-lg);
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
       background: var(--color-background);
       color: var(--color-foreground);
       margin-bottom: 0.5rem;
+      min-height: 72px;
     }
 
     .api-key-help {
-      font-size: 0.875rem;
+      font-size: var(--text-base);
       opacity: 0.8;
       line-height: 1.4;
     }
@@ -209,7 +211,7 @@ export class AutobiographyScreen extends LitElement {
     }
 
     .result-title {
-      font-size: 1.5rem;
+      font-size: var(--text-2xl);
       font-weight: 600;
       color: var(--color-foreground);
     }
@@ -220,15 +222,17 @@ export class AutobiographyScreen extends LitElement {
     }
 
     .action-button {
-      padding: 0.5rem 1rem;
+      padding: 1rem 1.5rem;
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
       background: var(--color-background);
       color: var(--color-foreground);
-      font-size: 0.875rem;
+      font-size: var(--text-base);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
+      min-height: 60px;
+      min-width: 60px;
     }
 
     .action-button:hover {
@@ -237,7 +241,7 @@ export class AutobiographyScreen extends LitElement {
     }
 
     .autobiography-content {
-      font-size: 1.125rem;
+      font-size: var(--text-lg);
       line-height: 1.8;
       color: var(--color-foreground);
       background: var(--color-muted);
@@ -287,8 +291,14 @@ export class AutobiographyScreen extends LitElement {
       }
 
       .autobiography-content {
-        font-size: 1rem;
+        font-size: var(--text-base);
         padding: 1.5rem;
+      }
+      
+      .action-button {
+        padding: 1.25rem;
+        font-size: var(--text-lg);
+        min-height: 72px;
       }
     }
   `;

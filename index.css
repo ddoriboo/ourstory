@@ -514,13 +514,13 @@ p {
 
 @media (max-width: 480px) {
   :root {
-    --text-3xl: 36px;    /* 최소 화면에서도 충분히 큼 */
-    --text-2xl: 28px;
-    --text-xl: 24px;
-    --text-lg: 22px;
-    --text-base: 20px;
-    --text-sm: 18px;
-    --text-xs: 16px;
+    --text-3xl: 40px;    /* 더 큰 크기 유지 */
+    --text-2xl: 32px;    /* 더 큰 크기 유지 */
+    --text-xl: 28px;     /* 더 큰 크기 유지 */
+    --text-lg: 24px;     /* 더 큰 크기 유지 */
+    --text-base: 22px;   /* 더 큰 크기 유지 */
+    --text-sm: 20px;     /* 더 큰 크기 유지 */
+    --text-xs: 18px;     /* 더 큰 크기 유지 */
   }
   
   .container {
@@ -528,8 +528,13 @@ p {
   }
   
   .btn {
-    min-height: 60px;    /* 최소 60px 유지 */
+    min-height: 64px;    /* 더 큰 버튼 크기 */
     padding: var(--spacing-3) var(--spacing-4);
+  }
+  
+  .btn-lg {
+    min-height: 72px;
+    padding: var(--spacing-4) var(--spacing-5);
   }
 }
 

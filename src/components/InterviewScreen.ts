@@ -86,13 +86,13 @@ export class InterviewScreen extends LitElement {
       background: transparent;
       border: none;
       color: var(--color-primary);
-      font-size: var(--text-2xl);
+      font-size: var(--text-3xl);
       cursor: pointer;
       padding: var(--spacing-3);
       border-radius: var(--radius);
       transition: all 0.2s ease-in-out;
-      min-height: 48px;
-      min-width: 48px;
+      min-height: 60px;
+      min-width: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -112,7 +112,7 @@ export class InterviewScreen extends LitElement {
     }
 
     .connection-status {
-      font-size: var(--text-sm);
+      font-size: var(--text-base);
       font-weight: 600;
       display: flex;
       align-items: center;
@@ -132,7 +132,7 @@ export class InterviewScreen extends LitElement {
     }
 
     .question-label {
-      font-size: var(--text-sm);
+      font-size: var(--text-base);
       font-weight: 600;
       color: var(--color-text-muted);
       margin-bottom: var(--spacing-3);
@@ -179,14 +179,14 @@ export class InterviewScreen extends LitElement {
     }
 
     .message-header {
-      font-size: var(--text-xs);
+      font-size: var(--text-sm);
       font-weight: 600;
       opacity: 0.8;
       margin-bottom: var(--spacing-2);
     }
 
     .message-timestamp {
-      font-size: var(--text-xs);
+      font-size: var(--text-sm);
       opacity: 0.7;
       margin-top: var(--spacing-3);
     }
@@ -262,7 +262,7 @@ export class InterviewScreen extends LitElement {
 
     .status-message {
       text-align: center;
-      font-size: var(--text-base);
+      font-size: var(--text-lg);
       color: var(--color-text-secondary);
       font-weight: 500;
       max-width: 300px;
@@ -291,7 +291,7 @@ export class InterviewScreen extends LitElement {
       }
 
       .session-title {
-        font-size: var(--text-base);
+        font-size: var(--text-lg);
       }
 
       .conversation-area {
@@ -299,8 +299,8 @@ export class InterviewScreen extends LitElement {
       }
 
       .message {
-        font-size: var(--text-sm);
-        padding: var(--spacing-3) var(--spacing-4);
+        font-size: var(--text-base);
+        padding: var(--spacing-4) var(--spacing-5);
       }
 
       .record-button {
@@ -310,7 +310,13 @@ export class InterviewScreen extends LitElement {
       }
 
       .secondary-controls {
-        gap: var(--spacing-2);
+        gap: var(--spacing-3);
+      }
+      
+      .back-button {
+        min-height: 56px;
+        min-width: 56px;
+        font-size: var(--text-2xl);
       }
     }
   `;

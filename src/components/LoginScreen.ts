@@ -104,11 +104,27 @@ export class LoginScreen extends LitElement {
       font-weight: 600;
       font-size: var(--text-base);
       transition: all 0.2s ease-in-out;
+      display: inline-block;
+      padding: var(--spacing-3) var(--spacing-4);
+      min-height: 48px;
+      min-width: 48px;
+      border-radius: var(--radius);
+      line-height: 1;
+      text-align: center;
+      border: 2px solid transparent;
     }
 
     .toggle-link:hover {
       text-decoration: underline;
       color: var(--color-primary-dark);
+      background: var(--color-surface-hover);
+      border-color: var(--color-border);
+    }
+    
+    .toggle-link:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+      background: var(--color-surface-hover);
     }
 
     @media (max-width: 480px) {

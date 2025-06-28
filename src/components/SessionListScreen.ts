@@ -93,14 +93,14 @@ export class SessionListScreen extends LitElement {
     .session-number {
       background: var(--gradient-primary);
       color: var(--color-text-inverse);
-      width: 56px;
-      height: 56px;
+      width: 80px;
+      height: 80px;
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: var(--text-lg);
+      font-size: var(--text-2xl);
       box-shadow: var(--shadow);
     }
 
@@ -112,9 +112,9 @@ export class SessionListScreen extends LitElement {
       display: flex;
       align-items: center;
       gap: var(--spacing-2);
-      font-size: var(--text-sm);
+      font-size: var(--text-base);
       font-weight: 600;
-      padding: var(--spacing-2) var(--spacing-3);
+      padding: var(--spacing-3) var(--spacing-4);
       border-radius: var(--radius-full);
       background: var(--color-surface);
     }
@@ -138,7 +138,7 @@ export class SessionListScreen extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: var(--text-sm);
+      font-size: var(--text-base);
       color: var(--color-text-muted);
       margin-bottom: var(--spacing-4);
     }
@@ -151,6 +151,21 @@ export class SessionListScreen extends LitElement {
 
     .last-updated {
       font-style: italic;
+    }
+    
+    .status-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+    }
+    
+    .status-dot.success {
+      background: var(--color-success);
+    }
+    
+    .status-dot.primary {
+      background: var(--color-primary);
     }
 
     .session-actions {
@@ -198,6 +213,17 @@ export class SessionListScreen extends LitElement {
       .session-actions {
         flex-direction: column;
         gap: var(--spacing-3);
+      }
+      
+      .session-number {
+        width: 72px;
+        height: 72px;
+        font-size: var(--text-xl);
+      }
+      
+      .session-status {
+        font-size: var(--text-sm);
+        padding: var(--spacing-2) var(--spacing-3);
       }
     }
   `;
