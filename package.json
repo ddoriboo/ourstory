@@ -7,13 +7,18 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite preview --port $PORT --host 0.0.0.0"
+    "start": "vite preview --port $PORT --host 0.0.0.0",
+    "db:setup": "node database/setup-schema.js",
+    "db:test": "node database/test-db.js"
   },
   "dependencies": {
     "@executeautomation/playwright-mcp-server": "^1.0.6",
     "@google/genai": "^0.9.0",
     "@lit/context": "^1.1.5",
+    "@types/pg": "^8.15.4",
+    "dotenv": "^17.0.0",
     "lit": "^3.3.0",
+    "pg": "^8.16.3",
     "three": "^0.176.0"
   },
   "devDependencies": {
