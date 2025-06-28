@@ -395,15 +395,29 @@ a:hover {
   opacity: 0.8;
 }
 
-/* 레이아웃 유틸리티 */
+/* 레이아웃 유틸리티 - 훨씬 더 넓은 화면 */
 .container {
-  max-width: 1200px;
+  max-width: 100%;
+  width: 100%;
   margin: 0 auto;
   padding: 0 var(--spacing-4);
 }
 
 .container-sm {
-  max-width: 640px;
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+}
+
+.container-md {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-4);
+}
+
+.container-lg {
+  max-width: 1600px;
   margin: 0 auto;
   padding: 0 var(--spacing-4);
 }

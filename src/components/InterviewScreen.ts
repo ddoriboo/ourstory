@@ -61,7 +61,8 @@ export class InterviewScreen extends LitElement {
       display: flex;
       flex-direction: column;
       height: 100vh;
-      max-width: 480px;
+      max-width: 100%;
+      width: 100%;
       margin: 0 auto;
       position: relative;
     }
@@ -282,6 +283,20 @@ export class InterviewScreen extends LitElement {
       box-shadow: var(--shadow-sm);
     }
 
+    @media (max-width: 768px) {
+      .interview-container {
+        max-width: 100%;
+      }
+      
+      .header {
+        padding: var(--spacing-4);
+      }
+      
+      .conversation-area {
+        padding: var(--spacing-4);
+      }
+    }
+
     @media (max-width: 480px) {
       .interview-container {
         max-width: 100%;
@@ -302,22 +317,28 @@ export class InterviewScreen extends LitElement {
       .message {
         font-size: var(--text-base);
         padding: var(--spacing-4) var(--spacing-5);
+        max-width: 90%;
       }
 
       .record-button {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         font-size: var(--text-4xl);
       }
 
       .secondary-controls {
         gap: var(--spacing-3);
+        flex-wrap: wrap;
       }
       
       .back-button {
-        min-height: 56px;
-        min-width: 56px;
+        min-height: 64px;
+        min-width: 64px;
         font-size: var(--text-2xl);
+      }
+      
+      .controls-area {
+        padding: var(--spacing-8);
       }
     }
   `;

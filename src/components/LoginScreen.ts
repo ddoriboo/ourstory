@@ -21,7 +21,7 @@ export class LoginScreen extends LitElement {
 
     .login-container {
       width: 100%;
-      max-width: 400px;
+      max-width: 800px;
     }
 
     .logo {

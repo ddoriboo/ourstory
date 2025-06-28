@@ -47,8 +47,10 @@ export class SessionListScreen extends LitElement {
     .sessions-grid {
       display: grid;
       gap: var(--spacing-16);
-      max-width: 800px;
+      max-width: 100%;
+      width: 100%;
       margin: 0 auto;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     }
 
     .session-card {
@@ -193,6 +195,13 @@ export class SessionListScreen extends LitElement {
       font-size: var(--text-base);
     }
 
+    @media (max-width: 768px) {
+      .sessions-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-12);
+      }
+    }
+
     @media (max-width: 480px) {
       :host {
         padding: var(--spacing-4) var(--spacing-3);
@@ -200,6 +209,11 @@ export class SessionListScreen extends LitElement {
 
       .header {
         margin-bottom: var(--spacing-20);
+      }
+
+      .sessions-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-8);
       }
 
       .session-card {
