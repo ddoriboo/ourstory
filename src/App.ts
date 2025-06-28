@@ -88,7 +88,7 @@ export class OurStoryApp extends LitElement {
 
     .nav-button {
       flex: 1;
-      max-width: 80px;
+      max-width: 100px;
       padding: var(--spacing-3);
       background: transparent;
       border: none;
@@ -102,7 +102,7 @@ export class OurStoryApp extends LitElement {
       flex-direction: column;
       align-items: center;
       gap: var(--spacing-2);
-      min-height: 64px;
+      min-height: 80px;
     }
 
     .nav-button:hover {
@@ -119,9 +119,9 @@ export class OurStoryApp extends LitElement {
     }
 
     .nav-icon {
-      width: 28px;
-      height: 28px;
-      stroke-width: 2;
+      width: 36px;
+      height: 36px;
+      stroke-width: 2.5;
     }
 
     .nav-text {
@@ -142,13 +142,13 @@ export class OurStoryApp extends LitElement {
       }
       
       .nav-button {
-        min-height: 60px;
+        min-height: 72px;
         padding: var(--spacing-2);
       }
       
       .nav-icon {
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
       }
     }
 

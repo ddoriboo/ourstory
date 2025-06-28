@@ -210,13 +210,13 @@ export class InterviewScreen extends LitElement {
     }
 
     .record-button {
-      width: 96px;
-      height: 96px;
+      width: 120px;
+      height: 120px;
       border-radius: var(--radius-full);
       border: none;
       background: var(--gradient-primary);
       color: var(--color-text-inverse);
-      font-size: var(--text-4xl);
+      font-size: var(--text-5xl);
       cursor: pointer;
       box-shadow: var(--shadow-lg);
       transition: all 0.2s ease-in-out;
@@ -304,9 +304,9 @@ export class InterviewScreen extends LitElement {
       }
 
       .record-button {
-        width: 80px;
-        height: 80px;
-        font-size: var(--text-2xl);
+        width: 100px;
+        height: 100px;
+        font-size: var(--text-4xl);
       }
 
       .secondary-controls {

@@ -56,34 +56,34 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
   
-  /* 간격 시스템 - 4px 기반 */
+  /* 간격 시스템 - 8px 기반 더 넉넉한 간격 */
   --spacing-0: 0;
-  --spacing-1: 4px;
-  --spacing-2: 8px;
-  --spacing-3: 12px;
-  --spacing-4: 16px;
-  --spacing-5: 20px;
-  --spacing-6: 24px;
-  --spacing-8: 32px;
-  --spacing-10: 40px;
-  --spacing-12: 48px;
-  --spacing-16: 64px;
-  --spacing-20: 80px;
-  --spacing-24: 96px;
+  --spacing-1: 8px;
+  --spacing-2: 16px;
+  --spacing-3: 24px;
+  --spacing-4: 32px;
+  --spacing-5: 40px;
+  --spacing-6: 48px;
+  --spacing-8: 64px;
+  --spacing-10: 80px;
+  --spacing-12: 96px;
+  --spacing-16: 128px;
+  --spacing-20: 160px;
+  --spacing-24: 192px;
   
   /* 폰트 패밀리 */
   --font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
   
-  /* 타이포그래피 - 고령층을 위한 큰 폰트 */
-  --text-xs: 14px;
-  --text-sm: 16px;
-  --text-base: 18px;    /* Body Regular */
-  --text-lg: 20px;      /* Body Large */
-  --text-xl: 24px;      /* Heading 3 */
-  --text-2xl: 28px;     /* Heading 2 */
-  --text-3xl: 32px;     /* Heading 1 */
-  --text-4xl: 36px;
-  --text-5xl: 48px;
+  /* 타이포그래피 - 초고령층을 위한 초대형 폰트 */
+  --text-xs: 18px;      /* 최소 크기도 18px */
+  --text-sm: 20px;
+  --text-base: 24px;    /* Body Regular - 크게 증가 */
+  --text-lg: 28px;      /* Body Large */
+  --text-xl: 32px;      /* Heading 3 */
+  --text-2xl: 40px;     /* Heading 2 */
+  --text-3xl: 48px;     /* Heading 1 - 매우 큼 */
+  --text-4xl: 56px;
+  --text-5xl: 64px;
   
   /* 행간 */
   --leading-none: 1;
@@ -170,7 +170,7 @@ p {
   line-height: var(--leading-normal);
 }
 
-/* 버튼 컴포넌트 시스템 - 고령층을 위한 큰 크기 */
+/* 버튼 컴포넌트 시스템 - 초고령층을 위한 초대형 크기 */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -181,11 +181,11 @@ p {
   font-weight: 600;
   line-height: var(--leading-none);
   text-decoration: none;
-  border: 2px solid transparent;
+  border: 3px solid transparent;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  min-height: 56px;
+  min-height: 72px;
   white-space: nowrap;
   user-select: none;
   font-family: inherit;
@@ -259,20 +259,20 @@ p {
 .btn-sm {
   padding: var(--spacing-3) var(--spacing-4);
   font-size: var(--text-sm);
-  min-height: 48px;
+  min-height: 64px;
 }
 
 .btn-lg {
   padding: var(--spacing-5) var(--spacing-8);
   font-size: var(--text-lg);
-  min-height: 64px;
+  min-height: 80px;
   border-radius: var(--radius-lg);
 }
 
 .btn-xl {
   padding: var(--spacing-6) var(--spacing-10);
   font-size: var(--text-xl);
-  min-height: 72px;
+  min-height: 96px;
   border-radius: var(--radius-xl);
 }
 
@@ -319,11 +319,11 @@ p {
   line-height: var(--leading-normal);
   color: var(--color-text);
   background: var(--color-background);
-  border: 2px solid var(--color-border);
+  border: 3px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease-in-out;
-  min-height: 56px;
+  min-height: 72px;
   font-family: inherit;
 }
 
@@ -483,11 +483,13 @@ p {
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   :root {
-    --text-3xl: 28px;
-    --text-2xl: 24px;
-    --text-xl: 20px;
-    --text-lg: 18px;
-    --text-base: 16px;
+    --text-3xl: 40px;    /* 여전히 큼 */
+    --text-2xl: 32px;
+    --text-xl: 28px;
+    --text-lg: 24px;
+    --text-base: 20px;   /* 모바일에서도 20px 유지 */
+    --text-sm: 18px;
+    --text-xs: 16px;     /* 최소 16px */
   }
   
   .container {
@@ -495,26 +497,30 @@ p {
   }
   
   .btn {
-    min-height: 52px;
+    min-height: 64px;    /* 작은 화면에서도 큰 버튼 */
     padding: var(--spacing-3) var(--spacing-5);
   }
   
   .btn-lg {
-    min-height: 60px;
+    min-height: 72px;
     padding: var(--spacing-4) var(--spacing-6);
   }
   
   .btn-xl {
-    min-height: 68px;
+    min-height: 80px;
     padding: var(--spacing-5) var(--spacing-8);
   }
 }
 
 @media (max-width: 480px) {
   :root {
-    --text-3xl: 24px;
-    --text-2xl: 20px;
-    --text-xl: 18px;
+    --text-3xl: 36px;    /* 최소 화면에서도 충분히 큼 */
+    --text-2xl: 28px;
+    --text-xl: 24px;
+    --text-lg: 22px;
+    --text-base: 20px;
+    --text-sm: 18px;
+    --text-xs: 16px;
   }
   
   .container {
@@ -522,7 +528,7 @@ p {
   }
   
   .btn {
-    min-height: 48px;
+    min-height: 60px;    /* 최소 60px 유지 */
     padding: var(--spacing-3) var(--spacing-4);
   }
 }
