@@ -11,20 +11,24 @@ export class LoginScreen extends LitElement {
 
   static styles = css`
     :host {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
+      width: 100vw;
       min-height: 100vh;
-      padding: var(--spacing-4);
       background: var(--color-background);
-      width: 100%;
+      padding: var(--spacing-6);
+      box-sizing: border-box;
     }
 
     .login-container {
       width: 100%;
-      max-width: 800px;
-      min-width: 320px;
-      padding: var(--spacing-4);
+      max-width: none;
+      margin: 0 auto;
+      padding: var(--spacing-8);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 4rem);
     }
 
     .logo {
@@ -55,6 +59,9 @@ export class LoginScreen extends LitElement {
       border-radius: var(--radius-lg);
       padding: var(--spacing-20);
       box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .form-header {
@@ -138,30 +145,35 @@ export class LoginScreen extends LitElement {
       background: var(--color-surface-hover);
     }
 
+    @media (max-width: 768px) {
+      .form-card {
+        max-width: 90%;
+        padding: var(--spacing-16);
+      }
+    }
+
     @media (max-width: 480px) {
       :host {
-        padding: var(--spacing-3);
-        min-width: 320px;
+        padding: var(--spacing-4);
       }
 
       .login-container {
-        min-width: 280px;
-        padding: var(--spacing-2);
+        padding: var(--spacing-6);
       }
 
       .logo h1 {
         font-size: var(--text-2xl);
-        white-space: nowrap;
+        white-space: normal;
       }
 
       .logo p {
-        font-size: var(--text-base);
+        font-size: var(--text-lg);
         white-space: normal;
       }
 
       .form-card {
+        max-width: 95%;
         padding: var(--spacing-12);
-        min-width: 260px;
       }
     }
   `;

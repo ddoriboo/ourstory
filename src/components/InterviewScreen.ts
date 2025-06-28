@@ -53,30 +53,30 @@ export class InterviewScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
+      width: 100vw;
+      height: 100vh;
       background: var(--color-background);
-      min-height: 100vh;
-      width: 100%;
-      min-width: 320px;
+      box-sizing: border-box;
     }
 
     .interview-container {
       display: flex;
       flex-direction: column;
       height: 100vh;
-      max-width: 100%;
       width: 100%;
-      margin: 0 auto;
       position: relative;
+      overflow: hidden;
     }
 
     .header {
       background: var(--gradient-surface);
       border-bottom: 1px solid var(--color-border-light);
-      padding: var(--spacing-4);
+      padding: var(--spacing-8);
       position: sticky;
       top: 0;
       z-index: var(--z-sticky);
       box-shadow: var(--shadow-sm);
+      width: 100%;
     }
 
     .header-top {
@@ -156,23 +156,25 @@ export class InterviewScreen extends LitElement {
     .conversation-area {
       flex: 1;
       overflow-y: auto;
-      padding: var(--spacing-4);
+      padding: var(--spacing-8);
       display: flex;
       flex-direction: column;
-      gap: var(--spacing-4);
+      gap: var(--spacing-6);
       background: var(--color-background);
+      width: 100%;
     }
 
     .message {
-      max-width: 85%;
-      padding: var(--spacing-4) var(--spacing-6);
+      max-width: 80%;
+      padding: var(--spacing-6) var(--spacing-8);
       border-radius: var(--radius-lg);
-      font-size: var(--text-base);
+      font-size: var(--text-lg);
       line-height: var(--leading-relaxed);
-      box-shadow: var(--shadow-sm);
+      box-shadow: var(--shadow-md);
       position: relative;
       word-break: keep-all;
       white-space: normal;
+      margin-bottom: var(--spacing-4);
     }
 
     .message.ai {
@@ -204,12 +206,13 @@ export class InterviewScreen extends LitElement {
     .controls-area {
       background: var(--gradient-surface);
       border-top: 1px solid var(--color-border-light);
-      padding: var(--spacing-16);
+      padding: var(--spacing-20);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--spacing-4);
+      gap: var(--spacing-8);
       box-shadow: var(--shadow-md);
+      width: 100%;
     }
 
     .main-control {
@@ -220,15 +223,15 @@ export class InterviewScreen extends LitElement {
     }
 
     .record-button {
-      width: 120px;
-      height: 120px;
+      width: 160px;
+      height: 160px;
       border-radius: var(--radius-full);
       border: none;
       background: var(--gradient-primary);
       color: var(--color-text-inverse);
       font-size: var(--text-5xl);
       cursor: pointer;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-xl);
       transition: all 0.2s ease-in-out;
       display: flex;
       align-items: center;
@@ -294,39 +297,41 @@ export class InterviewScreen extends LitElement {
     }
 
     @media (max-width: 768px) {
-      .interview-container {
-        max-width: 100%;
-      }
-      
       .header {
-        padding: var(--spacing-4);
+        padding: var(--spacing-6);
       }
       
       .conversation-area {
-        padding: var(--spacing-4);
+        padding: var(--spacing-6);
+      }
+      
+      .controls-area {
+        padding: var(--spacing-16);
+      }
+      
+      .record-button {
+        width: 140px;
+        height: 140px;
       }
     }
 
     @media (max-width: 480px) {
-      .interview-container {
-        max-width: 100%;
-      }
-
       .header {
-        padding: var(--spacing-3);
+        padding: var(--spacing-4);
       }
 
       .session-title {
-        font-size: var(--text-lg);
+        font-size: var(--text-xl);
       }
 
       .conversation-area {
-        padding: var(--spacing-3);
+        padding: var(--spacing-4);
+        gap: var(--spacing-4);
       }
 
       .message {
-        font-size: var(--text-base);
-        padding: var(--spacing-4) var(--spacing-5);
+        font-size: var(--text-lg);
+        padding: var(--spacing-5) var(--spacing-6);
         max-width: 90%;
       }
 
@@ -337,18 +342,19 @@ export class InterviewScreen extends LitElement {
       }
 
       .secondary-controls {
-        gap: var(--spacing-3);
+        gap: var(--spacing-4);
         flex-wrap: wrap;
       }
       
       .back-button {
-        min-height: 64px;
-        min-width: 64px;
+        min-height: 72px;
+        min-width: 72px;
         font-size: var(--text-2xl);
       }
       
       .controls-area {
-        padding: var(--spacing-8);
+        padding: var(--spacing-12);
+        gap: var(--spacing-6);
       }
     }
   `;

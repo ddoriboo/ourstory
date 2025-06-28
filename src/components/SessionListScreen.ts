@@ -21,11 +21,11 @@ export class SessionListScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: var(--spacing-20) var(--spacing-4);
-      background: var(--color-background);
+      width: 100vw;
       min-height: 100vh;
-      width: 100%;
-      min-width: 320px;
+      background: var(--color-background);
+      padding: var(--spacing-8);
+      box-sizing: border-box;
     }
 
     .header {
@@ -52,23 +52,24 @@ export class SessionListScreen extends LitElement {
 
     .sessions-grid {
       display: grid;
-      gap: var(--spacing-16);
-      max-width: 100%;
+      gap: var(--spacing-8);
       width: 100%;
-      margin: 0 auto;
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 500px), 1fr));
+      padding: 0 var(--spacing-4);
     }
 
     .session-card {
       background: var(--gradient-surface);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: var(--spacing-16);
+      padding: var(--spacing-20);
       box-shadow: var(--shadow-sm);
       transition: all 0.2s ease-in-out;
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      width: 100%;
+      min-height: 300px;
     }
 
     .session-card:hover {
@@ -208,46 +209,54 @@ export class SessionListScreen extends LitElement {
     @media (max-width: 768px) {
       .sessions-grid {
         grid-template-columns: 1fr;
-        gap: var(--spacing-12);
+        gap: var(--spacing-8);
+        padding: 0 var(--spacing-2);
+      }
+      
+      .session-card {
+        padding: var(--spacing-16);
+        min-height: 280px;
       }
     }
 
     @media (max-width: 480px) {
       :host {
-        padding: var(--spacing-4) var(--spacing-3);
+        padding: var(--spacing-6);
       }
 
       .header {
-        margin-bottom: var(--spacing-20);
+        margin-bottom: var(--spacing-16);
       }
 
       .sessions-grid {
         grid-template-columns: 1fr;
-        gap: var(--spacing-8);
+        gap: var(--spacing-6);
+        padding: 0;
       }
 
       .session-card {
         padding: var(--spacing-12);
+        min-height: 260px;
       }
 
       .session-title {
-        font-size: var(--text-lg);
+        font-size: var(--text-xl);
       }
 
       .session-actions {
         flex-direction: column;
-        gap: var(--spacing-3);
+        gap: var(--spacing-4);
       }
       
       .session-number {
-        width: 72px;
-        height: 72px;
+        width: 80px;
+        height: 80px;
         font-size: var(--text-xl);
       }
       
       .session-status {
-        font-size: var(--text-sm);
-        padding: var(--spacing-2) var(--spacing-3);
+        font-size: var(--text-base);
+        padding: var(--spacing-3) var(--spacing-4);
       }
     }
   `;
