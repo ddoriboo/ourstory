@@ -15,7 +15,7 @@ export class LoginScreen extends LitElement {
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: var(--spacing-xl);
+      padding: var(--spacing-20);
       background: var(--color-background);
     }
 
@@ -26,78 +26,83 @@ export class LoginScreen extends LitElement {
 
     .logo {
       text-align: center;
-      margin-bottom: var(--spacing-3xl);
+      margin-bottom: var(--spacing-24);
     }
 
     .logo h1 {
       color: var(--color-primary);
-      font-size: var(--font-size-senior-3xl);
-      margin-bottom: var(--spacing-sm);
+      font-size: var(--text-3xl);
+      margin-bottom: var(--spacing-3);
       font-weight: 700;
     }
 
     .logo p {
-      color: var(--color-text-light);
-      font-size: var(--font-size-senior-lg);
-      line-height: 1.5;
+      color: var(--color-text-secondary);
+      font-size: var(--text-lg);
+      line-height: var(--leading-relaxed);
     }
 
     .form-card {
       background: var(--gradient-surface);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: var(--spacing-xl);
+      padding: var(--spacing-20);
       box-shadow: var(--shadow-lg);
     }
 
     .form-header {
       text-align: center;
-      margin-bottom: var(--spacing-xl);
+      margin-bottom: var(--spacing-20);
     }
 
     .form-header h2 {
-      margin-bottom: var(--spacing-sm);
+      font-size: var(--text-2xl);
+      margin-bottom: var(--spacing-3);
       color: var(--color-text);
+      font-weight: 600;
     }
 
     .form-header p {
-      color: var(--color-text-light);
-      font-size: var(--font-size-base);
+      color: var(--color-text-secondary);
+      font-size: var(--text-base);
+      line-height: var(--leading-normal);
     }
 
     .form-group {
-      margin-bottom: var(--spacing-lg);
+      margin-bottom: var(--spacing-16);
     }
 
     .form-label {
       display: block;
-      font-size: var(--font-size-senior-base);
+      font-size: var(--text-base);
       font-weight: 600;
-      margin-bottom: var(--spacing-sm);
+      margin-bottom: var(--spacing-3);
       color: var(--color-text);
     }
 
     .error-message {
       background: var(--color-error);
       color: var(--color-text-inverse);
-      padding: var(--spacing);
+      padding: var(--spacing-4);
       border-radius: var(--radius);
-      margin-bottom: var(--spacing);
+      margin-bottom: var(--spacing-4);
       font-weight: 600;
+      font-size: var(--text-base);
       box-shadow: var(--shadow-sm);
     }
 
     .toggle-mode {
       text-align: center;
-      margin-top: var(--spacing-lg);
-      color: var(--color-text-light);
+      margin-top: var(--spacing-16);
+      color: var(--color-text-secondary);
+      font-size: var(--text-base);
     }
 
     .toggle-link {
       color: var(--color-primary);
       text-decoration: none;
       font-weight: 600;
-      font-size: var(--font-size-senior-base);
+      font-size: var(--text-base);
       transition: all 0.2s ease-in-out;
     }
 
@@ -108,19 +113,19 @@ export class LoginScreen extends LitElement {
 
     @media (max-width: 480px) {
       :host {
-        padding: var(--spacing);
+        padding: var(--spacing-4);
       }
 
       .logo h1 {
-        font-size: var(--font-size-senior-2xl);
+        font-size: var(--text-2xl);
       }
 
       .logo p {
-        font-size: var(--font-size-senior-base);
+        font-size: var(--text-base);
       }
 
       .form-card {
-        padding: var(--spacing-lg);
+        padding: var(--spacing-16);
       }
     }
   `;

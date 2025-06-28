@@ -89,11 +89,11 @@ export class OurStoryApp extends LitElement {
     .nav-button {
       flex: 1;
       max-width: 80px;
-      padding: var(--spacing-sm);
+      padding: var(--spacing-3);
       background: transparent;
       border: none;
-      color: var(--color-text-light);
-      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      font-size: var(--text-xs);
       font-weight: 600;
       cursor: pointer;
       border-radius: var(--radius);
@@ -101,8 +101,8 @@ export class OurStoryApp extends LitElement {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--spacing-xs);
-      min-height: 60px;
+      gap: var(--spacing-2);
+      min-height: 64px;
     }
 
     .nav-button:hover {
@@ -119,16 +119,16 @@ export class OurStoryApp extends LitElement {
     }
 
     .nav-icon {
-      width: 24px;
-      height: 24px;
+      width: 28px;
+      height: 28px;
       stroke-width: 2;
     }
 
     .nav-text {
-      font-size: var(--font-size-xs);
+      font-size: var(--text-xs);
       font-weight: 600;
       text-align: center;
-      line-height: 1.2;
+      line-height: var(--leading-tight);
     }
 
     /* 화면별 안전 영역 확보 */
@@ -138,17 +138,17 @@ export class OurStoryApp extends LitElement {
       }
       
       .navigation-bar {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-3);
       }
       
       .nav-button {
-        min-height: 56px;
-        padding: var(--spacing-xs);
+        min-height: 60px;
+        padding: var(--spacing-2);
       }
       
       .nav-icon {
-        width: 20px;
-        height: 20px;
+        width: 24px;
+        height: 24px;
       }
     }
 

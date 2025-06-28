@@ -68,7 +68,7 @@ export class InterviewScreen extends LitElement {
     .header {
       background: var(--gradient-surface);
       border-bottom: 1px solid var(--color-border-light);
-      padding: var(--spacing);
+      padding: var(--spacing-4);
       position: sticky;
       top: 0;
       z-index: var(--z-sticky);
@@ -79,18 +79,23 @@ export class InterviewScreen extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--spacing-sm);
+      margin-bottom: var(--spacing-3);
     }
 
     .back-button {
       background: transparent;
       border: none;
       color: var(--color-primary);
-      font-size: var(--font-size-2xl);
+      font-size: var(--text-2xl);
       cursor: pointer;
-      padding: var(--spacing-sm);
+      padding: var(--spacing-3);
       border-radius: var(--radius);
       transition: all 0.2s ease-in-out;
+      min-height: 48px;
+      min-width: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .back-button:hover {
@@ -99,7 +104,7 @@ export class InterviewScreen extends LitElement {
     }
 
     .session-title {
-      font-size: var(--font-size-senior-lg);
+      font-size: var(--text-lg);
       font-weight: 600;
       color: var(--color-text);
       text-align: center;
@@ -107,12 +112,12 @@ export class InterviewScreen extends LitElement {
     }
 
     .connection-status {
-      font-size: var(--font-size-sm);
+      font-size: var(--text-sm);
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: var(--spacing-sm);
-      padding: var(--spacing-xs) var(--spacing-sm);
+      gap: var(--spacing-2);
+      padding: var(--spacing-2) var(--spacing-3);
       border-radius: var(--radius-full);
       background: var(--color-surface);
     }
@@ -121,41 +126,41 @@ export class InterviewScreen extends LitElement {
       background: var(--color-surface);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius);
-      padding: var(--spacing);
-      margin-top: var(--spacing-sm);
+      padding: var(--spacing-4);
+      margin-top: var(--spacing-3);
       box-shadow: var(--shadow-sm);
     }
 
     .question-label {
-      font-size: var(--font-size-sm);
+      font-size: var(--text-sm);
       font-weight: 600;
       color: var(--color-text-muted);
-      margin-bottom: var(--spacing-sm);
+      margin-bottom: var(--spacing-3);
     }
 
     .question-text {
-      font-size: var(--font-size-senior-base);
+      font-size: var(--text-base);
       font-weight: 500;
       color: var(--color-text);
-      line-height: 1.5;
+      line-height: var(--leading-normal);
     }
 
     .conversation-area {
       flex: 1;
       overflow-y: auto;
-      padding: var(--spacing);
+      padding: var(--spacing-4);
       display: flex;
       flex-direction: column;
-      gap: var(--spacing);
+      gap: var(--spacing-4);
       background: var(--color-background);
     }
 
     .message {
       max-width: 85%;
-      padding: var(--spacing) var(--spacing-lg);
+      padding: var(--spacing-4) var(--spacing-6);
       border-radius: var(--radius-lg);
-      font-size: var(--font-size-senior-base);
-      line-height: 1.6;
+      font-size: var(--text-base);
+      line-height: var(--leading-relaxed);
       box-shadow: var(--shadow-sm);
       position: relative;
     }
@@ -174,26 +179,26 @@ export class InterviewScreen extends LitElement {
     }
 
     .message-header {
-      font-size: var(--font-size-xs);
+      font-size: var(--text-xs);
       font-weight: 600;
       opacity: 0.8;
-      margin-bottom: var(--spacing-xs);
+      margin-bottom: var(--spacing-2);
     }
 
     .message-timestamp {
-      font-size: var(--font-size-xs);
+      font-size: var(--text-xs);
       opacity: 0.7;
-      margin-top: var(--spacing-sm);
+      margin-top: var(--spacing-3);
     }
 
     .controls-area {
       background: var(--gradient-surface);
       border-top: 1px solid var(--color-border-light);
-      padding: var(--spacing-lg);
+      padding: var(--spacing-16);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--spacing);
+      gap: var(--spacing-4);
       box-shadow: var(--shadow-md);
     }
 
@@ -201,17 +206,17 @@ export class InterviewScreen extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: var(--spacing);
+      gap: var(--spacing-4);
     }
 
     .record-button {
-      width: 88px;
-      height: 88px;
+      width: 96px;
+      height: 96px;
       border-radius: var(--radius-full);
       border: none;
       background: var(--gradient-primary);
       color: var(--color-text-inverse);
-      font-size: var(--font-size-3xl);
+      font-size: var(--text-4xl);
       cursor: pointer;
       box-shadow: var(--shadow-lg);
       transition: all 0.2s ease-in-out;
@@ -250,27 +255,29 @@ export class InterviewScreen extends LitElement {
 
     .secondary-controls {
       display: flex;
-      gap: var(--spacing-sm);
+      gap: var(--spacing-3);
       flex-wrap: wrap;
       justify-content: center;
     }
 
     .status-message {
       text-align: center;
-      font-size: var(--font-size-base);
-      color: var(--color-text-light);
+      font-size: var(--text-base);
+      color: var(--color-text-secondary);
       font-weight: 500;
       max-width: 300px;
+      line-height: var(--leading-normal);
     }
 
     .error-message {
       background: var(--color-error);
       color: var(--color-text-inverse);
-      padding: var(--spacing);
+      padding: var(--spacing-4);
       border-radius: var(--radius);
-      margin: var(--spacing);
+      margin: var(--spacing-4);
       font-weight: 600;
       text-align: center;
+      font-size: var(--text-base);
       box-shadow: var(--shadow-sm);
     }
 
@@ -280,30 +287,30 @@ export class InterviewScreen extends LitElement {
       }
 
       .header {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-3);
       }
 
       .session-title {
-        font-size: var(--font-size-senior-base);
+        font-size: var(--text-base);
       }
 
       .conversation-area {
-        padding: var(--spacing-sm);
+        padding: var(--spacing-3);
       }
 
       .message {
-        font-size: var(--font-size-base);
-        padding: var(--spacing-sm) var(--spacing);
+        font-size: var(--text-sm);
+        padding: var(--spacing-3) var(--spacing-4);
       }
 
       .record-button {
-        width: 76px;
-        height: 76px;
-        font-size: var(--font-size-2xl);
+        width: 80px;
+        height: 80px;
+        font-size: var(--text-2xl);
       }
 
       .secondary-controls {
-        gap: var(--spacing-xs);
+        gap: var(--spacing-2);
       }
     }
   `;

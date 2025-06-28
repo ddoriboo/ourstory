@@ -21,30 +21,32 @@ export class SessionListScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
-      padding: var(--spacing-xl) var(--spacing);
+      padding: var(--spacing-20) var(--spacing-4);
       background: var(--color-background);
       min-height: 100vh;
     }
 
     .header {
       text-align: center;
-      margin-bottom: var(--spacing-3xl);
+      margin-bottom: var(--spacing-24);
     }
 
     .header h1 {
+      font-size: var(--text-3xl);
       color: var(--color-primary);
-      margin-bottom: var(--spacing-sm);
+      margin-bottom: var(--spacing-3);
+      font-weight: 700;
     }
 
     .header p {
-      color: var(--color-text-light);
-      font-size: var(--font-size-senior-lg);
-      line-height: 1.5;
+      color: var(--color-text-secondary);
+      font-size: var(--text-lg);
+      line-height: var(--leading-relaxed);
     }
 
     .sessions-grid {
       display: grid;
-      gap: var(--spacing-lg);
+      gap: var(--spacing-16);
       max-width: 800px;
       margin: 0 auto;
     }
@@ -53,7 +55,7 @@ export class SessionListScreen extends LitElement {
       background: var(--gradient-surface);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: var(--spacing-lg);
+      padding: var(--spacing-16);
       box-shadow: var(--shadow-sm);
       transition: all 0.2s ease-in-out;
       cursor: pointer;
@@ -85,20 +87,20 @@ export class SessionListScreen extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--spacing);
+      margin-bottom: var(--spacing-4);
     }
 
     .session-number {
       background: var(--gradient-primary);
       color: var(--color-text-inverse);
-      width: 48px;
-      height: 48px;
+      width: 56px;
+      height: 56px;
       border-radius: var(--radius-full);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: var(--font-size-senior-base);
+      font-size: var(--text-lg);
       box-shadow: var(--shadow);
     }
 
@@ -109,42 +111,42 @@ export class SessionListScreen extends LitElement {
     .session-status {
       display: flex;
       align-items: center;
-      gap: var(--spacing-sm);
-      font-size: var(--font-size-sm);
+      gap: var(--spacing-2);
+      font-size: var(--text-sm);
       font-weight: 600;
-      padding: var(--spacing-xs) var(--spacing-sm);
+      padding: var(--spacing-2) var(--spacing-3);
       border-radius: var(--radius-full);
       background: var(--color-surface);
     }
 
     .session-title {
-      font-size: var(--font-size-senior-xl);
+      font-size: var(--text-xl);
       font-weight: 600;
-      margin-bottom: var(--spacing-sm);
+      margin-bottom: var(--spacing-3);
       color: var(--color-text);
-      line-height: 1.3;
+      line-height: var(--leading-tight);
     }
 
     .session-description {
-      color: var(--color-text-light);
-      font-size: var(--font-size-base);
-      margin-bottom: var(--spacing);
-      line-height: 1.5;
+      color: var(--color-text-secondary);
+      font-size: var(--text-base);
+      margin-bottom: var(--spacing-4);
+      line-height: var(--leading-normal);
     }
 
     .session-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: var(--font-size-sm);
+      font-size: var(--text-sm);
       color: var(--color-text-muted);
-      margin-bottom: var(--spacing);
+      margin-bottom: var(--spacing-4);
     }
 
     .conversation-count {
       display: flex;
       align-items: center;
-      gap: var(--spacing-xs);
+      gap: var(--spacing-2);
     }
 
     .last-updated {
@@ -153,48 +155,49 @@ export class SessionListScreen extends LitElement {
 
     .session-actions {
       display: flex;
-      gap: var(--spacing-sm);
-      margin-top: var(--spacing);
-      padding-top: var(--spacing);
+      gap: var(--spacing-3);
+      margin-top: var(--spacing-4);
+      padding-top: var(--spacing-4);
       border-top: 1px solid var(--color-border-light);
     }
 
     .empty-state {
       text-align: center;
-      margin-top: var(--spacing-3xl);
-      color: var(--color-text-light);
-      padding: var(--spacing-2xl);
+      margin-top: var(--spacing-24);
+      color: var(--color-text-secondary);
+      padding: var(--spacing-20);
     }
 
     .empty-state h3 {
-      margin-bottom: var(--spacing);
+      font-size: var(--text-xl);
+      margin-bottom: var(--spacing-4);
       color: var(--color-text);
     }
 
     .empty-state p {
-      font-size: var(--font-size-senior-base);
+      font-size: var(--text-base);
     }
 
     @media (max-width: 480px) {
       :host {
-        padding: var(--spacing) var(--spacing-sm);
+        padding: var(--spacing-4) var(--spacing-3);
       }
 
       .header {
-        margin-bottom: var(--spacing-xl);
+        margin-bottom: var(--spacing-20);
       }
 
       .session-card {
-        padding: var(--spacing);
+        padding: var(--spacing-12);
       }
 
       .session-title {
-        font-size: var(--font-size-senior-lg);
+        font-size: var(--text-lg);
       }
 
       .session-actions {
         flex-direction: column;
-        gap: var(--spacing-sm);
+        gap: var(--spacing-3);
       }
     }
   `;
