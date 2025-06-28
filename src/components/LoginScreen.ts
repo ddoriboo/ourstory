@@ -235,23 +235,27 @@ export class LoginScreen extends LitElement {
     try {
       const { apiService } = await import('../services/api');
       
+      let response;
       if (this.isLogin) {
-        await apiService.login(this.username, this.password);
+        response = await apiService.login({
+          username: this.username,
+          password: this.password
+        });
       } else {
-        await apiService.register(this.username, this.password);
+        response = await apiService.register({
+          username: this.username,
+          password: this.password
+        });
       }
 
-      // 로그인 성공 이벤트 발생
+      // 로그인 성공 이벤트 발생 (API 응답 데이터 사용)
       this.dispatchEvent(new CustomEvent('user-login', {
-        detail: {
-          id: 1,
-          username: this.username,
-          full_name: this.username
-        },
+        detail: response.user,
         bubbles: true,
         composed: true
       }));
     } catch (error: any) {
+      console.error('로그인/회원가입 오류:', error);
       this.error = error.message || '로그인에 실패했습니다.';
     }
   }
