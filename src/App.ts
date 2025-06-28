@@ -38,126 +38,112 @@ export class OurStoryApp extends LitElement {
     :host {
       display: block;
       width: 100%;
-      min-height: 100vh;
+      height: 100vh;
       background: var(--color-background);
       color: var(--color-text);
       font-family: var(--font-family);
+      overflow: hidden;
     }
 
     .app-container {
       width: 100%;
-      min-height: 100vh;
-      position: relative;
+      height: 100vh;
       display: flex;
       flex-direction: column;
-    }
-
-    .mobile-layout {
-      max-width: 480px;
-      margin: 0 auto;
-      width: 100%;
-      min-height: 100vh;
       position: relative;
-      display: flex;
-      flex-direction: column;
     }
 
-    .screen-container {
+    .main-content {
       flex: 1;
       width: 100%;
-      padding-bottom: 100px; /* 네비게이션 바 공간 확보 */
       overflow-y: auto;
       overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
     }
 
     .navigation-bar {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
       width: 100%;
-      max-width: 480px;
-      background: var(--gradient-surface);
-      border-top: 2px solid var(--color-border-light);
-      padding: var(--spacing-sm) var(--spacing);
-      z-index: var(--z-fixed);
+      height: 80px;
+      background: var(--color-background);
+      border-top: 1px solid var(--color-border-light);
       display: flex;
+      align-items: center;
       justify-content: space-around;
-      box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      padding: var(--spacing-2) var(--spacing-3);
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
     }
 
     .nav-button {
       flex: 1;
-      max-width: 100px;
-      padding: var(--spacing-3);
-      background: transparent;
-      border: none;
-      color: var(--color-text-secondary);
-      font-size: var(--text-xs);
-      font-weight: 600;
-      cursor: pointer;
-      border-radius: var(--radius);
-      transition: all 0.2s ease-in-out;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: var(--spacing-2);
-      min-height: 80px;
+      justify-content: center;
+      padding: var(--spacing-1);
+      background: transparent;
+      border: none;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      border-radius: var(--radius);
+      min-height: 60px;
+      gap: 4px;
     }
 
     .nav-button:hover {
       background: var(--color-surface-hover);
       color: var(--color-text);
-      transform: translateY(-1px);
     }
 
     .nav-button.active {
-      background: var(--gradient-primary);
-      color: var(--color-text-inverse);
-      box-shadow: var(--shadow);
-      transform: translateY(-2px);
+      color: var(--color-primary);
+    }
+
+    .nav-button.active .nav-icon {
+      stroke: var(--color-primary);
     }
 
     .nav-icon {
-      width: 36px;
-      height: 36px;
-      stroke-width: 2.5;
+      width: 24px;
+      height: 24px;
+      stroke-width: 2;
+      stroke: currentColor;
     }
 
     .nav-text {
-      font-size: var(--text-xs);
-      font-weight: 600;
+      font-size: 11px;
+      font-weight: 500;
       text-align: center;
-      line-height: var(--leading-tight);
+      line-height: 1;
     }
 
-    /* 화면별 안전 영역 확보 */
-    @media (max-width: 480px) {
-      .screen-container {
-        padding-bottom: 110px; /* 모바일에서 더 넉넉한 공간 */
-      }
-      
-      .navigation-bar {
-        padding: var(--spacing-3);
-      }
-      
-      .nav-button {
-        min-height: 72px;
-        padding: var(--spacing-2);
-      }
-      
+    /* 모바일 퍼스트 - 추가 스타일링 */
+    @media (max-width: 768px) {
       .nav-icon {
-        width: 32px;
-        height: 32px;
+        width: 22px;
+        height: 22px;
+      }
+      
+      .nav-text {
+        font-size: 10px;
+      }
+    }
+
+    /* 태블릿 및 데스크톱에서는 센터 정렬 */
+    @media (min-width: 769px) {
+      :host {
+        max-width: 480px;
+        margin: 0 auto;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
       }
     }
 
     /* 아이폰 홈 인디케이터 대응 */
     @supports (padding: max(0px)) {
       .navigation-bar {
-        padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+        padding-bottom: max(var(--spacing-2), env(safe-area-inset-bottom));
       }
     }
   `;
@@ -287,56 +273,54 @@ export class OurStoryApp extends LitElement {
 
     return html`
       <div class="navigation-bar">
-        <div class="navigation-content">
-          <button 
-            class="nav-button ${this.currentRoute === 'sessionList' ? 'active' : ''}"
-            @click=${() => this.onNavigate('sessionList')}>
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <rect x="3" y="3" width="7" height="7"/>
-              <rect x="14" y="3" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7"/>
-              <rect x="3" y="14" width="7" height="7"/>
-            </svg>
-            <span class="nav-text">세션</span>
-          </button>
-          
-          <button 
-            class="nav-button ${this.currentRoute === 'storyView' ? 'active' : ''}"
-            @click=${() => this.onNavigate('storyView')}>
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-              <polyline points="14,2 14,8 20,8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10,9 9,9 8,9"/>
-            </svg>
-            <span class="nav-text">내 이야기</span>
-          </button>
-          
-          <button 
-            class="nav-button ${this.currentRoute === 'autobiography' ? 'active' : ''}"
-            @click=${() => this.onNavigate('autobiography')}>
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-              <path d="M8 7h8"/>
-              <path d="M8 11h8"/>
-              <path d="M8 15h6"/>
-            </svg>
-            <span class="nav-text">자서전</span>
-          </button>
-          
-          <button 
-            class="nav-button"
-            @click=${this.onLogout}>
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-              <polyline points="16,17 21,12 16,7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            <span class="nav-text">로그아웃</span>
-          </button>
-        </div>
+        <button 
+          class="nav-button ${this.currentRoute === 'sessionList' ? 'active' : ''}"
+          @click=${() => this.onNavigate('sessionList')}>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <rect x="3" y="3" width="7" height="7"/>
+            <rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          <span class="nav-text">세션</span>
+        </button>
+        
+        <button 
+          class="nav-button ${this.currentRoute === 'storyView' ? 'active' : ''}"
+          @click=${() => this.onNavigate('storyView')}>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <polyline points="14,2 14,8 20,8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10,9 9,9 8,9"/>
+          </svg>
+          <span class="nav-text">내 이야기</span>
+        </button>
+        
+        <button 
+          class="nav-button ${this.currentRoute === 'autobiography' ? 'active' : ''}"
+          @click=${() => this.onNavigate('autobiography')}>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+            <path d="M8 7h8"/>
+            <path d="M8 11h8"/>
+            <path d="M8 15h6"/>
+          </svg>
+          <span class="nav-text">자서전</span>
+        </button>
+        
+        <button 
+          class="nav-button"
+          @click=${this.onLogout}>
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+            <polyline points="16,17 21,12 16,7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span class="nav-text">로그아웃</span>
+        </button>
       </div>
     `;
   }
@@ -391,12 +375,10 @@ export class OurStoryApp extends LitElement {
   render() {
     return html`
       <div class="app-container">
-        <div class="responsive-layout">
-          <div class="screen-container">
-            ${this.renderCurrentScreen()}
-          </div>
-          ${this.renderNavigation()}
+        <div class="main-content">
+          ${this.renderCurrentScreen()}
         </div>
+        ${this.renderNavigation()}
       </div>
     `;
   }

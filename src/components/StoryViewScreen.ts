@@ -23,19 +23,23 @@ export class StoryViewScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
+      height: 100%;
       background: var(--color-background);
-      min-height: 100vh;
-      padding: var(--spacing-3);
+      overflow: hidden;
     }
 
     .container {
-      max-width: 1024px;
-      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: var(--spacing-3);
     }
 
     .header {
+      flex-shrink: 0;
       text-align: center;
-      margin-bottom: var(--spacing-8);
+      padding: var(--spacing-4) 0;
+      margin-bottom: var(--spacing-4);
     }
 
     .header h1 {
@@ -50,23 +54,30 @@ export class StoryViewScreen extends LitElement {
     }
 
     .view-toggle {
+      flex-shrink: 0;
       display: flex;
       gap: var(--spacing-2);
-      margin-bottom: var(--spacing-8);
+      margin-bottom: var(--spacing-4);
       justify-content: center;
     }
 
     .toggle-button {
-      padding: var(--spacing-3) var(--spacing-4);
+      padding: var(--spacing-2) var(--spacing-4);
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
       background: var(--color-background);
       color: var(--color-text);
-      font-size: var(--text-base);
+      font-size: var(--text-sm);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      min-height: 56px;
+      min-height: 44px;
+    }
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .toggle-button:hover {
@@ -511,7 +522,9 @@ export class StoryViewScreen extends LitElement {
           ` : ''}
         </div>
 
-        ${this.viewMode === 'overview' ? this.renderOverview() : this.renderDetail()}
+        <div class="main-content">
+          ${this.viewMode === 'overview' ? this.renderOverview() : this.renderDetail()}
+        </div>
       </div>
     `;
   }

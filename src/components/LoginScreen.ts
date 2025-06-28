@@ -11,165 +11,209 @@ export class LoginScreen extends LitElement {
 
   static styles = css`
     :host {
+      display: block;
+      height: 100%;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+      overflow: hidden;
+    }
+
+    .container {
+      height: 100%;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      min-height: 100vh;
-      background: var(--color-background);
+      align-items: center;
       padding: var(--spacing-4);
-      width: 100%;
+      position: relative;
     }
 
-    .login-container {
-      width: 100%;
-      max-width: 1024px;
-      margin: 0 auto;
-      padding: var(--spacing-4);
-    }
-
-    .logo {
+    .logo-section {
       text-align: center;
-      margin-bottom: var(--spacing-12);
+      margin-bottom: var(--spacing-8);
+      color: white;
     }
 
-    .logo h1 {
-      color: var(--color-primary);
+    .logo-section h1 {
       font-size: var(--text-3xl);
-      margin-bottom: var(--spacing-3);
       font-weight: 700;
-      word-break: keep-all;
-      white-space: nowrap;
+      margin: 0 0 var(--spacing-2) 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
-    .logo p {
-      color: var(--color-text-secondary);
+    .logo-section p {
       font-size: var(--text-lg);
+      opacity: 0.9;
+      margin: 0;
       line-height: var(--leading-relaxed);
-      word-break: keep-all;
-      white-space: normal;
     }
 
-    .form-card {
-      background: var(--gradient-surface);
-      border: 1px solid var(--color-border-light);
-      border-radius: var(--radius-lg);
-      padding: var(--spacing-8);
-      box-shadow: var(--shadow-lg);
+    .form-container {
       width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 360px;
+      background: var(--color-background);
+      border-radius: var(--radius-xl);
+      padding: var(--spacing-6);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      margin-bottom: var(--spacing-4);
     }
 
     .form-header {
       text-align: center;
-      margin-bottom: var(--spacing-8);
+      margin-bottom: var(--spacing-6);
     }
 
     .form-header h2 {
-      font-size: var(--text-2xl);
-      margin-bottom: var(--spacing-3);
-      color: var(--color-text);
+      font-size: var(--text-xl);
       font-weight: 600;
-      word-break: keep-all;
-      white-space: normal;
+      color: var(--color-text);
+      margin: 0 0 var(--spacing-2) 0;
     }
 
     .form-header p {
       color: var(--color-text-secondary);
-      font-size: var(--text-base);
-      line-height: var(--leading-normal);
-      word-break: keep-all;
-      white-space: normal;
+      font-size: var(--text-sm);
+      margin: 0;
     }
 
-    .form-group {
-      margin-bottom: var(--spacing-16);
+    .form-toggle {
+      display: flex;
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-1);
+      margin-bottom: var(--spacing-6);
     }
 
-    .form-label {
-      display: block;
-      font-size: var(--text-base);
-      font-weight: 600;
-      margin-bottom: var(--spacing-3);
-      color: var(--color-text);
-    }
-
-    .error-message {
-      background: var(--color-error);
-      color: var(--color-text-inverse);
-      padding: var(--spacing-4);
+    .toggle-button {
+      flex: 1;
+      padding: var(--spacing-2) var(--spacing-3);
+      text-align: center;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      font-size: var(--text-sm);
+      font-weight: 500;
       border-radius: var(--radius);
-      margin-bottom: var(--spacing-4);
-      font-weight: 600;
-      font-size: var(--text-base);
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+    }
+
+    .toggle-button.active {
+      background: var(--color-background);
+      color: var(--color-primary);
       box-shadow: var(--shadow-sm);
     }
 
-    .toggle-mode {
-      text-align: center;
-      margin-top: var(--spacing-16);
-      color: var(--color-text-secondary);
-      font-size: var(--text-base);
+    .form-group {
+      margin-bottom: var(--spacing-4);
     }
 
-    .toggle-link {
-      color: var(--color-primary);
-      text-decoration: none;
-      font-weight: 600;
+    .form-group label {
+      display: block;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text);
+      margin-bottom: var(--spacing-1);
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: var(--spacing-3);
       font-size: var(--text-base);
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      background: var(--color-background);
+      color: var(--color-text);
       transition: all 0.2s ease-in-out;
-      display: inline-block;
-      padding: var(--spacing-3) var(--spacing-4);
       min-height: 48px;
-      min-width: 48px;
-      border-radius: var(--radius);
-      line-height: 1;
-      text-align: center;
-      border: 2px solid transparent;
+      box-sizing: border-box;
     }
 
-    .toggle-link:hover {
-      text-decoration: underline;
-      color: var(--color-primary-dark);
-      background: var(--color-surface-hover);
-      border-color: var(--color-border);
-    }
-    
-    .toggle-link:focus {
+    .form-group input:focus {
       outline: none;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
-      background: var(--color-surface-hover);
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
-    @media (max-width: 768px) {
-      .form-card {
-        max-width: 100%;
-        padding: var(--spacing-16);
-      }
+    .error-message {
+      color: var(--color-error);
+      font-size: var(--text-sm);
+      margin-top: var(--spacing-2);
+      text-align: center;
+      padding: var(--spacing-2);
+      background: rgba(220, 38, 38, 0.1);
+      border-radius: var(--radius);
     }
 
+    .submit-button {
+      width: 100%;
+      background: var(--gradient-primary);
+      color: white;
+      border: none;
+      padding: var(--spacing-4);
+      font-size: var(--text-base);
+      font-weight: 600;
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      min-height: 56px;
+      margin-top: var(--spacing-2);
+    }
+
+    .submit-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .submit-button:active {
+      transform: translateY(0);
+    }
+
+    .bottom-section {
+      position: absolute;
+      bottom: var(--spacing-4);
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: var(--text-xs);
+    }
+
+    /* 작은 화면 최적화 */
     @media (max-width: 480px) {
-      :host {
+      .container {
         padding: var(--spacing-3);
       }
-
-      .login-container {
+      
+      .form-container {
         padding: var(--spacing-4);
       }
-
-      .logo h1 {
+      
+      .logo-section {
+        margin-bottom: var(--spacing-6);
+      }
+      
+      .logo-section h1 {
         font-size: var(--text-2xl);
-        white-space: normal;
       }
+    }
 
-      .logo p {
-        font-size: var(--text-lg);
-        white-space: normal;
+    /* 매우 작은 화면 */
+    @media (max-height: 600px) {
+      .container {
+        justify-content: flex-start;
+        padding-top: var(--spacing-8);
       }
-
-      .form-card {
-        max-width: 100%;
-        padding: var(--spacing-12);
+      
+      .logo-section {
+        margin-bottom: var(--spacing-4);
+      }
+      
+      .bottom-section {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        margin-top: var(--spacing-4);
       }
     }
   `;
@@ -179,7 +223,7 @@ export class LoginScreen extends LitElement {
     this.error = '';
 
     if (!this.username.trim() || !this.password.trim()) {
-      this.error = '아이디와 비밀번호를 모두 입력해주세요.';
+      this.error = '사용자명과 비밀번호를 입력해주세요.';
       return;
     }
 
@@ -188,88 +232,83 @@ export class LoginScreen extends LitElement {
       return;
     }
 
-    if (!this.isLogin && this.password.length < 4) {
-      this.error = '비밀번호는 4자 이상이어야 합니다.';
-      return;
-    }
-
     try {
       const { apiService } = await import('../services/api');
       
       if (this.isLogin) {
-        // 로그인
-        const response = await apiService.login({
-          username: this.username,
-          password: this.password
-        });
-
-        // 로그인 성공
-        this.dispatchEvent(new CustomEvent('user-login', {
-          detail: response.user
-        }));
+        await apiService.login(this.username, this.password);
       } else {
-        // 회원가입
-        const response = await apiService.register({
-          username: this.username,
-          password: this.password
-        });
-
-        // 회원가입 후 자동 로그인
-        this.dispatchEvent(new CustomEvent('user-login', {
-          detail: response.user
-        }));
+        await apiService.register(this.username, this.password);
       }
-    } catch (error) {
-      console.error('인증 오류:', error);
-      this.error = error.message || '로그인 중 오류가 발생했습니다.';
+
+      // 로그인 성공 이벤트 발생
+      this.dispatchEvent(new CustomEvent('user-login', {
+        detail: {
+          id: 1,
+          username: this.username,
+          full_name: this.username
+        },
+        bubbles: true,
+        composed: true
+      }));
+    } catch (error: any) {
+      this.error = error.message || '로그인에 실패했습니다.';
     }
   }
 
   private toggleMode() {
     this.isLogin = !this.isLogin;
     this.error = '';
-    this.password = '';
     this.confirmPassword = '';
   }
 
   render() {
     return html`
-      <div class="login-container">
-        <div class="logo">
-          <h1>📖 우리 이야기</h1>
-          <p>어르신의 소중한 인생 이야기를<br>아름다운 자서전으로</p>
+      <div class="container">
+        <div class="logo-section">
+          <h1>우리의 이야기</h1>
+          <p>당신의 소중한 추억을 간직하세요</p>
         </div>
 
-        <div class="form-card">
+        <div class="form-container">
           <div class="form-header">
             <h2>${this.isLogin ? '로그인' : '회원가입'}</h2>
-            <p>${this.isLogin ? '계정에 로그인하여 이야기를 시작하세요' : '새 계정을 만들어 시작하세요'}</p>
+            <p>${this.isLogin ? '계정에 로그인하세요' : '새 계정을 만들어보세요'}</p>
           </div>
 
-          ${this.error ? html`
-            <div class="error-message">${this.error}</div>
-          ` : ''}
+          <div class="form-toggle">
+            <button 
+              class="toggle-button ${this.isLogin ? 'active' : ''}"
+              @click=${() => this.isLogin || this.toggleMode()}>
+              로그인
+            </button>
+            <button 
+              class="toggle-button ${!this.isLogin ? 'active' : ''}"
+              @click=${() => !this.isLogin || this.toggleMode()}>
+              회원가입
+            </button>
+          </div>
 
           <form @submit=${this.handleSubmit}>
             <div class="form-group">
-              <label class="form-label">아이디</label>
+              <label for="username">사용자명</label>
               <input
                 type="text"
-                class="input"
+                id="username"
                 .value=${this.username}
-                @input=${(e: InputEvent) => this.username = (e.target as HTMLInputElement).value}
-                placeholder="아이디를 입력하세요"
+                @input=${(e: Event) => this.username = (e.target as HTMLInputElement).value}
+                placeholder="사용자명을 입력하세요"
                 required
               />
             </div>
 
             <div class="form-group">
-              <label class="form-label">비밀번호</label>
+              <label for="password">비밀번호</label>
               <input
                 type="password"
-                class="input"
+                id="password"
                 .value=${this.password}
-                @input=${(e: InputEvent) => this.password = (e.target as HTMLInputElement).value}
+                @input=${(e: Event) => this.password = (e.target as HTMLInputElement).value}
                 placeholder="비밀번호를 입력하세요"
                 required
               />
@@ -277,29 +316,30 @@ export class LoginScreen extends LitElement {
 
             ${!this.isLogin ? html`
               <div class="form-group">
-                <label class="form-label">비밀번호 확인</label>
+                <label for="confirmPassword">비밀번호 확인</label>
                 <input
                   type="password"
-                  class="input"
+                  id="confirmPassword"
                   .value=${this.confirmPassword}
-                  @input=${(e: InputEvent) => this.confirmPassword = (e.target as HTMLInputElement).value}
+                  @input=${(e: Event) => this.confirmPassword = (e.target as HTMLInputElement).value}
                   placeholder="비밀번호를 다시 입력하세요"
                   required
                 />
               </div>
             ` : ''}
 
-            <button type="submit" class="btn btn-primary btn-full btn-lg">
+            ${this.error ? html`
+              <div class="error-message">${this.error}</div>
+            ` : ''}
+
+            <button type="submit" class="submit-button">
               ${this.isLogin ? '로그인' : '회원가입'}
             </button>
           </form>
+        </div>
 
-          <div class="toggle-mode">
-            ${this.isLogin ? '계정이 없으신가요?' : '이미 계정이 있으신가요?'}
-            <a href="#" class="toggle-link" @click=${(e: Event) => { e.preventDefault(); this.toggleMode(); }}>
-              ${this.isLogin ? '회원가입' : '로그인'}
-            </a>
-          </div>
+        <div class="bottom-section">
+          © 2024 우리의 이야기. 모든 권리 보유.
         </div>
       </div>
     `;

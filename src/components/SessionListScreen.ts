@@ -21,384 +21,310 @@ export class SessionListScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
-      min-height: 100vh;
+      height: 100%;
       background: var(--color-background);
-      padding: var(--spacing-4);
-      width: 100%;
+      overflow: hidden;
+    }
+
+    .container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: var(--spacing-3);
     }
 
     .header {
+      flex-shrink: 0;
       text-align: center;
-      margin-bottom: var(--spacing-8);
-      max-width: 1024px;
-      margin-left: auto;
-      margin-right: auto;
+      padding: var(--spacing-4) 0;
+      margin-bottom: var(--spacing-3);
     }
 
     .header h1 {
-      font-size: var(--text-3xl);
+      font-size: var(--text-2xl);
       color: var(--color-primary);
-      margin-bottom: var(--spacing-3);
+      margin: 0 0 var(--spacing-2) 0;
       font-weight: 700;
-      word-break: keep-all;
-      white-space: normal;
     }
 
     .header p {
       color: var(--color-text-secondary);
-      font-size: var(--text-lg);
+      font-size: var(--text-base);
+      margin: 0;
       line-height: var(--leading-relaxed);
-      word-break: keep-all;
-      white-space: normal;
+    }
+
+    .sessions-container {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .sessions-grid {
       display: grid;
-      gap: var(--spacing-4);
-      width: 100%;
-      max-width: 1024px;
-      margin: 0 auto;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      padding: 0 var(--spacing-3);
+      gap: var(--spacing-3);
+      grid-template-columns: 1fr;
+      padding-bottom: var(--spacing-4);
     }
 
     .session-card {
       background: var(--gradient-surface);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: var(--spacing-6);
+      padding: var(--spacing-4);
       box-shadow: var(--shadow-sm);
       transition: all 0.2s ease-in-out;
       cursor: pointer;
       position: relative;
       overflow: hidden;
-      width: 100%;
-      min-height: 200px;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
     .session-card:hover {
-      transform: translateY(-3px);
+      transform: translateY(-2px);
       box-shadow: var(--shadow-lg);
     }
 
-    .session-card.completed {
-      border-color: var(--color-success);
-      background: linear-gradient(135deg, var(--color-surface) 0%, #FFFFFF 50%, var(--color-surface) 100%);
-    }
-
-    .session-card.completed::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--gradient-primary);
+    .session-card:active {
+      transform: translateY(0);
+      box-shadow: var(--shadow);
     }
 
     .session-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-bottom: var(--spacing-4);
-    }
-
-    .session-number {
-      background: var(--gradient-primary);
-      color: var(--color-text-inverse);
-      width: 80px;
-      height: 80px;
-      border-radius: var(--radius-full);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: var(--text-2xl);
-      box-shadow: var(--shadow);
-    }
-
-    .session-number.completed {
-      background: var(--gradient-secondary);
-    }
-
-    .session-status {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-      font-size: var(--text-base);
-      font-weight: 600;
-      padding: var(--spacing-3) var(--spacing-4);
-      border-radius: var(--radius-full);
-      background: var(--color-surface);
+      align-items: flex-start;
+      margin-bottom: var(--spacing-3);
     }
 
     .session-title {
-      font-size: var(--text-xl);
+      font-size: var(--text-lg);
       font-weight: 600;
-      margin-bottom: var(--spacing-3);
       color: var(--color-text);
+      margin: 0;
       line-height: var(--leading-tight);
-      word-break: keep-all;
-      white-space: normal;
+      flex: 1;
+    }
+
+    .session-status {
+      padding: var(--spacing-1) var(--spacing-2);
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      margin-left: var(--spacing-2);
+    }
+
+    .session-status.completed {
+      background: var(--color-success);
+      color: white;
+    }
+
+    .session-status.in-progress {
+      background: var(--color-warning);
+      color: white;
     }
 
     .session-description {
       color: var(--color-text-secondary);
-      font-size: var(--text-base);
-      margin-bottom: var(--spacing-4);
+      font-size: var(--text-sm);
       line-height: var(--leading-normal);
-      word-break: keep-all;
-      white-space: normal;
+      margin-bottom: var(--spacing-3);
+      flex: 1;
     }
 
-    .session-meta {
+    .session-footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: var(--text-base);
-      color: var(--color-text-muted);
-      margin-bottom: var(--spacing-4);
-    }
-
-    .conversation-count {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-2);
-    }
-
-    .last-updated {
-      font-style: italic;
-    }
-    
-    .status-dot {
-      width: 20px;
-      height: 20px;
-      border-radius: var(--radius-full);
-      display: inline-block;
-    }
-    
-    .status-dot.success {
-      background: var(--color-success);
-    }
-    
-    .status-dot.primary {
-      background: var(--color-primary);
-    }
-
-    .session-actions {
-      display: flex;
-      gap: var(--spacing-3);
-      margin-top: var(--spacing-4);
-      padding-top: var(--spacing-4);
+      padding-top: var(--spacing-2);
       border-top: 1px solid var(--color-border-light);
     }
 
+    .conversation-count {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-1);
+    }
+
+    .last-updated {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .session-progress {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: var(--color-primary);
+      transition: width 0.3s ease-in-out;
+    }
+
     .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      margin-top: var(--spacing-24);
-      color: var(--color-text-secondary);
-      padding: var(--spacing-20);
+      padding: var(--spacing-8);
     }
 
-    .empty-state h3 {
-      font-size: var(--text-xl);
+    .empty-icon {
+      width: 64px;
+      height: 64px;
       margin-bottom: var(--spacing-4);
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
       color: var(--color-text);
+      margin-bottom: var(--spacing-2);
     }
 
-    .empty-state p {
+    .empty-description {
+      color: var(--color-text-secondary);
       font-size: var(--text-base);
+      line-height: var(--leading-relaxed);
+      max-width: 280px;
     }
 
-    @media (max-width: 768px) {
+    /* 태블릿에서는 2열 그리드 */
+    @media (min-width: 769px) and (max-width: 1024px) {
       .sessions-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-8);
-        padding: 0;
-      }
-      
-      .session-card {
-        padding: var(--spacing-16);
-        min-height: 280px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      :host {
-        padding: var(--spacing-4);
-      }
-
-      .header {
-        margin-bottom: var(--spacing-16);
-      }
-
-      .sessions-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-6);
-        padding: 0;
-      }
-
-      .session-card {
-        padding: var(--spacing-12);
-        min-height: 260px;
-      }
-
-      .session-title {
-        font-size: var(--text-xl);
-      }
-
-      .session-actions {
-        flex-direction: column;
+        grid-template-columns: 1fr 1fr;
         gap: var(--spacing-4);
       }
-      
-      .session-number {
-        width: 80px;
-        height: 80px;
-        font-size: var(--text-xl);
+    }
+
+    /* 데스크톱에서는 3열 그리드 */
+    @media (min-width: 1025px) {
+      .sessions-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--spacing-4);
+      }
+    }
+
+    /* 작은 화면에서 패딩 조정 */
+    @media (max-width: 480px) {
+      .container {
+        padding: var(--spacing-2);
       }
       
-      .session-status {
-        font-size: var(--text-base);
-        padding: var(--spacing-3) var(--spacing-4);
+      .session-card {
+        padding: var(--spacing-3);
+        min-height: 100px;
       }
     }
   `;
 
-  private getSessionDescription(sessionId: number): string {
-    const session = interviewConfig.sessions[sessionId];
-    if (!session) return '';
-    
-    const questionCount = session.questions.length;
-    return `${questionCount}개의 질문으로 구성된 인터뷰 세션입니다.`;
-  }
-
-  private isSessionCompleted(sessionId: number): boolean {
-    const data = this.sessionData[sessionId];
-    return data?.completed || false;
-  }
-
-  private getConversationCount(sessionId: number): number {
-    const data = this.sessionData[sessionId];
-    return data?.conversations?.length || 0;
-  }
-
-  private getLastUpdated(sessionId: number): string {
-    const data = this.sessionData[sessionId];
-    if (!data?.lastUpdated) return '';
-    
-    const date = new Date(data.lastUpdated);
-    return date.toLocaleDateString('ko-KR', {
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  }
-
   private handleSessionSelect(sessionId: number) {
     this.dispatchEvent(new CustomEvent('session-select', {
-      detail: { sessionId }
+      detail: { sessionId },
+      bubbles: true,
+      composed: true
     }));
   }
 
-  private handleSessionReset(sessionId: number, e: Event) {
-    e.stopPropagation();
+  private formatLastUpdated(date?: Date): string {
+    if (!date) return '시작하지 않음';
     
-    if (confirm('이 세션의 모든 대화 내용이 삭제됩니다. 정말 초기화하시겠습니까?')) {
-      this.dispatchEvent(new CustomEvent('session-update', {
-        detail: {
-          sessionId,
-          data: {
-            completed: false,
-            conversations: [],
-            lastUpdated: new Date()
-          }
-        }
-      }));
-    }
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return '오늘';
+    if (diffDays === 1) return '1일 전';
+    if (diffDays < 7) return `${diffDays}일 전`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)}주 전`;
+    return `${Math.floor(diffDays / 30)}개월 전`;
   }
 
-  private handleSessionDelete(sessionId: number, e: Event) {
-    e.stopPropagation();
+  private getProgressPercentage(session: SessionData): number {
+    const totalQuestions = interviewConfig.sessions.find(s => s.id === session.sessionId)?.questions.length || 1;
+    const answeredQuestions = session.conversations.filter(c => c.speaker === 'user').length;
+    return Math.min((answeredQuestions / totalQuestions) * 100, 100);
+  }
+
+  private renderEmptyState() {
+    return html`
+      <div class="empty-state">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        <h3 class="empty-title">세션이 없습니다</h3>
+        <p class="empty-description">
+          첫 번째 인터뷰 세션을 시작해보세요. 당신의 소중한 이야기를 들려주세요.
+        </p>
+      </div>
+    `;
+  }
+
+  private renderSessionCard(session: SessionData) {
+    const config = interviewConfig.sessions.find(s => s.id === session.sessionId);
+    const progressPercentage = this.getProgressPercentage(session);
     
-    if (confirm('이 세션을 완전히 삭제하시겠습니까? 삭제된 데이터는 복구할 수 없습니다.')) {
-      this.dispatchEvent(new CustomEvent('session-update', {
-        detail: {
-          sessionId,
-          data: null // null로 전달하면 삭제로 처리
-        }
-      }));
-    }
+    return html`
+      <div class="session-card" @click=${() => this.handleSessionSelect(session.sessionId)}>
+        <div class="session-header">
+          <h3 class="session-title">${session.title}</h3>
+          <div class="session-status ${session.completed ? 'completed' : 'in-progress'}">
+            ${session.completed ? '완료' : '진행중'}
+          </div>
+        </div>
+        
+        <p class="session-description">
+          ${config?.description || '인터뷰 세션에 참여하여 당신의 이야기를 들려주세요.'}
+        </p>
+        
+        <div class="session-footer">
+          <div class="conversation-count">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            ${session.conversations.length}개 대화
+          </div>
+          <div class="last-updated">
+            ${this.formatLastUpdated(session.lastUpdated)}
+          </div>
+        </div>
+        
+        <div class="session-progress" style="width: ${progressPercentage}%"></div>
+      </div>
+    `;
   }
 
   render() {
-    const sessions = Object.entries(interviewConfig.sessions).map(([id, config]) => ({
-      id: parseInt(id),
-      ...config
-    }));
+    const sessions = Object.values(this.sessionData);
+    const hasSessions = sessions.length > 0;
 
     return html`
-      <div class="header">
-        <h1>나의 인생 이야기</h1>
-        <p>12개의 세션을 통해 소중한 추억들을<br>차근차근 기록해보세요</p>
-      </div>
-
-      <div class="sessions-grid">
-        ${sessions.map(session => {
-          const completed = this.isSessionCompleted(session.id);
-          const conversationCount = this.getConversationCount(session.id);
-          const lastUpdated = this.getLastUpdated(session.id);
-
-          return html`
-            <div 
-              class="session-card ${completed ? 'completed' : ''}"
-              @click=${() => this.handleSessionSelect(session.id)}>
-              
-              <div class="session-header">
-                <div class="session-number ${completed ? 'completed' : ''}">${session.id}</div>
-                <div class="session-status">
-                  <div class="status-dot ${completed ? 'success' : 'primary'}"></div>
-                  ${completed ? '완료' : '진행 중'}
-                </div>
-              </div>
-
-              <h3 class="session-title">${session.title}</h3>
-              <p class="session-description">${this.getSessionDescription(session.id)}</p>
-
-              <div class="session-meta">
-                <div class="conversation-count">
-                  💬 ${conversationCount}개 대화
-                </div>
-                ${lastUpdated ? html`
-                  <div class="last-updated">${lastUpdated}</div>
-                ` : ''}
-              </div>
-
-              <div class="session-actions">
-                <button 
-                  class="btn btn-primary btn-sm"
-                  @click=${(e: Event) => { e.stopPropagation(); this.handleSessionSelect(session.id); }}>
-                  ${completed ? '다시 보기' : '시작하기'}
-                </button>
-                
-                ${conversationCount > 0 ? html`
-                  <button 
-                    class="btn btn-outline btn-sm"
-                    @click=${(e: Event) => this.handleSessionReset(session.id, e)}>
-                    초기화
-                  </button>
-                  <button 
-                    class="btn btn-ghost btn-sm"
-                    style="color: var(--color-error); border-color: var(--color-error);"
-                    @click=${(e: Event) => this.handleSessionDelete(session.id, e)}>
-                    삭제
-                  </button>
-                ` : ''}
-              </div>
+      <div class="container">
+        <div class="header">
+          <h1>나의 이야기 세션</h1>
+          <p>당신의 소중한 경험과 추억을 나누어주세요</p>
+        </div>
+        
+        ${hasSessions ? html`
+          <div class="sessions-container">
+            <div class="sessions-grid">
+              ${sessions.map(session => this.renderSessionCard(session))}
             </div>
-          `;
-        })}
+          </div>
+        ` : this.renderEmptyState()}
       </div>
     `;
   }

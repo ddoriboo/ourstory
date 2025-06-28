@@ -25,19 +25,23 @@ export class AutobiographyScreen extends LitElement {
   static styles = css`
     :host {
       display: block;
+      height: 100%;
       background: var(--color-background);
-      min-height: 100vh;
-      padding: var(--spacing-3);
+      overflow: hidden;
     }
 
     .container {
-      max-width: 1024px;
-      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: var(--spacing-3);
     }
 
     .header {
+      flex-shrink: 0;
       text-align: center;
-      margin-bottom: var(--spacing-8);
+      padding: var(--spacing-4) 0;
+      margin-bottom: var(--spacing-4);
     }
 
     .header h1 {
@@ -52,12 +56,18 @@ export class AutobiographyScreen extends LitElement {
       line-height: var(--leading-relaxed);
     }
 
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     .stats-section {
       background: var(--gradient-surface);
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
       padding: var(--spacing-6);
-      margin-bottom: var(--spacing-8);
+      margin-bottom: var(--spacing-6);
       box-shadow: var(--shadow);
     }
 
@@ -501,9 +511,11 @@ ${interviewContent}
             <p>소중한 이야기들을 하나의 아름다운 자서전으로 만들어보세요</p>
           </div>
 
-          <div class="empty-state">
-            <h3>아직 자서전을 생성할 수 없습니다</h3>
-            <p>먼저 인터뷰 세션을 진행하여 이야기를 기록해주세요.</p>
+          <div class="main-content">
+            <div class="empty-state">
+              <h3>아직 자서전을 생성할 수 없습니다</h3>
+              <p>먼저 인터뷰 세션을 진행하여 이야기를 기록해주세요.</p>
+            </div>
           </div>
         </div>
       `;
@@ -516,7 +528,8 @@ ${interviewContent}
           <p>지금까지 기록된 ${stats.completedSessions}개 세션의 이야기를<br>하나의 아름다운 자서전으로 만들어보세요</p>
         </div>
 
-        <div class="stats-section">
+        <div class="main-content">
+          <div class="stats-section">
           <div class="stats-title">이야기 통계</div>
           <div class="stats-grid">
             <div class="stat-item">
@@ -597,6 +610,7 @@ ${interviewContent}
             </div>
           </div>
         ` : ''}
+        </div>
       </div>
     `;
   }

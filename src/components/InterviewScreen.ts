@@ -54,14 +54,15 @@ export class InterviewScreen extends LitElement {
     :host {
       display: block;
       background: var(--color-background);
-      min-height: 100vh;
+      height: 100%;
       width: 100%;
+      overflow: hidden;
     }
 
     .interview-container {
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      height: 100%;
       width: 100%;
       max-width: 1024px;
       margin: 0 auto;
