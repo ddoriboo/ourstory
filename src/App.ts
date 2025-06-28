@@ -17,14 +17,16 @@ export interface User {
 
 export interface SessionData {
   sessionId: number;
+  sessionNumber: number;
   title: string;
-  completed: boolean;
-  conversations: Array<{
-    speaker: 'ai' | 'user';
-    text: string;
-    timestamp: Date;
-  }>;
+  description: string;
+  estimatedDuration: number;
+  totalQuestions: number;
+  status: 'not_started' | 'in_progress' | 'completed';
+  progressPercent: number;
+  conversationCount: number;
   lastUpdated?: Date;
+  userSessionId?: number;
 }
 
 @customElement('ourstory-app')
@@ -32,7 +34,6 @@ export class OurStoryApp extends LitElement {
   @state() currentRoute: AppRoute = 'login';
   @state() currentUser: User | null = null;
   @state() selectedSessionId: number = 1;
-  @state() sessionData: Record<number, SessionData> = {};
 
   static styles = css`
     :host {
@@ -221,52 +222,11 @@ export class OurStoryApp extends LitElement {
     this.currentRoute = route;
   }
 
-  onSelectSession(sessionId: number) {
-    this.selectedSessionId = sessionId;
+  onSelectSession(eventDetail: { sessionId: number; sessionNumber: number; userSessionId?: number }) {
+    this.selectedSessionId = eventDetail.sessionNumber; // InterviewScreen은 sessionNumber를 사용
     this.currentRoute = 'interview';
   }
 
-  async onUpdateSessionData(sessionId: number, data: Partial<SessionData>) {
-    if (!this.sessionData[sessionId]) {
-      this.sessionData[sessionId] = {
-        sessionId,
-        title: `세션 ${sessionId}`,
-        completed: false,
-        conversations: []
-      };
-    }
-    
-    // 로컬 상태 업데이트
-    this.sessionData[sessionId] = {
-      ...this.sessionData[sessionId],
-      ...data,
-      lastUpdated: new Date()
-    };
-    
-    // API로 대화 데이터 저장 (conversations가 있는 경우)
-    if (data.conversations && data.conversations.length > 0) {
-      try {
-        const { apiService } = await import('./services/api');
-        
-        // 새로운 대화만 저장 (기존에 없던 것들)
-        const existingConversations = this.sessionData[sessionId].conversations || [];
-        const newConversations = data.conversations.slice(existingConversations.length);
-        
-        for (const conversation of newConversations) {
-          await apiService.saveConversation({
-            userSessionId: sessionId, // 임시로 sessionId 사용
-            speaker: conversation.speaker,
-            messageText: conversation.text,
-            questionIndex: 0 // 임시값
-          });
-        }
-      } catch (error) {
-        console.error('대화 저장 실패:', error);
-      }
-    }
-    
-    this.requestUpdate();
-  }
 
   private renderNavigation() {
     if (this.currentRoute === 'login') return '';
@@ -337,9 +297,7 @@ export class OurStoryApp extends LitElement {
       case 'sessionList':
         return html`
           <session-list-screen 
-            .sessionData=${this.sessionData}
-            @session-select=${(e: CustomEvent) => this.onSelectSession(e.detail.sessionId)}
-            @session-update=${(e: CustomEvent) => this.onUpdateSessionData(e.detail.sessionId, e.detail.data)}>
+            @session-select=${(e: CustomEvent) => this.onSelectSession(e.detail)}>
           </session-list-screen>
         `;
       
@@ -347,23 +305,20 @@ export class OurStoryApp extends LitElement {
         return html`
           <interview-screen 
             .sessionId=${this.selectedSessionId}
-            .sessionData=${this.sessionData[this.selectedSessionId]}
-            @session-update=${(e: CustomEvent) => this.onUpdateSessionData(this.selectedSessionId, e.detail.data)}
+            .sessionData=${null}
             @navigate-back=${() => this.onNavigate('sessionList')}>
           </interview-screen>
         `;
       
       case 'storyView':
         return html`
-          <story-view-screen 
-            .sessionData=${this.sessionData}>
+          <story-view-screen>
           </story-view-screen>
         `;
       
       case 'autobiography':
         return html`
-          <autobiography-screen 
-            .sessionData=${this.sessionData}>
+          <autobiography-screen>
           </autobiography-screen>
         `;
       

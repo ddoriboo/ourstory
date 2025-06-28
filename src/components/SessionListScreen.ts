@@ -1,22 +1,78 @@
 import {LitElement, css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import {interviewConfig} from '../../interviewConfig';
+import {customElement, property, state} from 'lit/decorators.js';
+import {Session, UserSession, apiService} from '../services/api';
 
 export interface SessionData {
   sessionId: number;
+  sessionNumber: number;
   title: string;
-  completed: boolean;
-  conversations: Array<{
-    speaker: 'ai' | 'user';
-    text: string;
-    timestamp: Date;
-  }>;
+  description: string;
+  estimatedDuration: number;
+  totalQuestions: number;
+  status: 'not_started' | 'in_progress' | 'completed';
+  progressPercent: number;
+  conversationCount: number;
   lastUpdated?: Date;
+  userSessionId?: number;
 }
 
 @customElement('session-list-screen')
 export class SessionListScreen extends LitElement {
-  @property({ type: Object }) sessionData: Record<number, SessionData> = {};
+  @state() private sessions: SessionData[] = [];
+  @state() private loading = true;
+  @state() private error = '';
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.loadSessions();
+  }
+
+  private async loadSessions() {
+    try {
+      this.loading = true;
+      this.error = '';
+
+      // 1. 모든 세션 템플릿 가져오기
+      const allSessions = await apiService.getSessions();
+      
+      // 2. 사용자의 진행상황 가져오기 (인증된 경우만)
+      let userSessions: UserSession[] = [];
+      if (apiService.isAuthenticated()) {
+        try {
+          userSessions = await apiService.getUserSessions();
+        } catch (userError) {
+          console.warn('사용자 세션 데이터를 가져올 수 없습니다:', userError);
+        }
+      }
+
+      // 3. 세션 데이터 병합
+      this.sessions = allSessions
+        .sort((a, b) => a.session_number - b.session_number)
+        .map(session => {
+          const userSession = userSessions.find(us => us.session_id === session.id);
+          
+          return {
+            sessionId: session.id,
+            sessionNumber: session.session_number,
+            title: session.title,
+            description: session.description || '',
+            estimatedDuration: session.estimated_duration || 45,
+            totalQuestions: Array.isArray(session.questions) ? session.questions.length : 0,
+            status: userSession?.status || 'not_started',
+            progressPercent: userSession?.progress_percent || 0,
+            conversationCount: 0, // 대화 개수는 별도로 계산 필요시 추가
+            lastUpdated: userSession?.last_updated ? new Date(userSession.last_updated) : undefined,
+            userSessionId: userSession?.id
+          } as SessionData;
+        });
+
+      this.loading = false;
+    } catch (error) {
+      console.error('세션 로드 실패:', error);
+      this.error = '세션을 불러오는데 실패했습니다. 다시 시도해주세요.';
+      this.loading = false;
+    }
+  }
 
   static styles = css`
     :host {
@@ -125,9 +181,14 @@ export class SessionListScreen extends LitElement {
       color: white;
     }
 
-    .session-status.in-progress {
+    .session-status.in_progress {
       background: var(--color-warning);
       color: white;
+    }
+
+    .session-status.not_started {
+      background: var(--color-border);
+      color: var(--color-text-secondary);
     }
 
     .session-description {
@@ -199,6 +260,76 @@ export class SessionListScreen extends LitElement {
       max-width: 280px;
     }
 
+    .loading-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-8);
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--color-border);
+      border-top: 3px solid var(--color-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: var(--spacing-4);
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: var(--color-text-secondary);
+      font-size: var(--text-base);
+    }
+
+    .error-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-8);
+      text-align: center;
+    }
+
+    .error-message {
+      color: var(--color-error);
+      font-size: var(--text-base);
+      margin-bottom: var(--spacing-4);
+      max-width: 400px;
+      line-height: var(--leading-relaxed);
+    }
+
+    .retry-button {
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      padding: var(--spacing-2) var(--spacing-4);
+      border-radius: var(--radius);
+      font-size: var(--text-sm);
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .retry-button:hover {
+      background: var(--color-primary-dark);
+    }
+
+    .session-duration {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-1);
+    }
+
     /* 태블릿에서는 2열 그리드 */
     @media (min-width: 769px) and (max-width: 1024px) {
       .sessions-grid {
@@ -228,19 +359,24 @@ export class SessionListScreen extends LitElement {
     }
   `;
 
-  private handleSessionSelect(sessionId: number) {
+  private handleSessionSelect(session: SessionData) {
     this.dispatchEvent(new CustomEvent('session-select', {
-      detail: { sessionId },
+      detail: { 
+        sessionId: session.sessionId, 
+        sessionNumber: session.sessionNumber,
+        userSessionId: session.userSessionId 
+      },
       bubbles: true,
       composed: true
     }));
   }
 
-  private formatLastUpdated(date?: Date): string {
-    if (!date) return '시작하지 않음';
+  private formatLastUpdated(session: SessionData): string {
+    if (session.status === 'not_started') return '시작하지 않음';
+    if (!session.lastUpdated) return '시작하지 않음';
     
     const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
+    const diffMs = now.getTime() - session.lastUpdated.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     
     if (diffDays === 0) return '오늘';
@@ -250,10 +386,22 @@ export class SessionListScreen extends LitElement {
     return `${Math.floor(diffDays / 30)}개월 전`;
   }
 
-  private getProgressPercentage(session: SessionData): number {
-    const totalQuestions = interviewConfig.sessions.find(s => s.id === session.sessionId)?.questions.length || 1;
-    const answeredQuestions = session.conversations.filter(c => c.speaker === 'user').length;
-    return Math.min((answeredQuestions / totalQuestions) * 100, 100);
+  private getStatusText(status: string): string {
+    switch (status) {
+      case 'completed': return '완료';
+      case 'in_progress': return '진행중';
+      case 'not_started': return '시작하기';
+      default: return '시작하기';
+    }
+  }
+
+  private formatDuration(minutes: number): string {
+    if (minutes >= 60) {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      return remainingMinutes > 0 ? `${hours}시간 ${remainingMinutes}분` : `${hours}시간`;
+    }
+    return `${minutes}분`;
   }
 
   private renderEmptyState() {
@@ -274,43 +422,64 @@ export class SessionListScreen extends LitElement {
   }
 
   private renderSessionCard(session: SessionData) {
-    const config = interviewConfig.sessions.find(s => s.id === session.sessionId);
-    const progressPercentage = this.getProgressPercentage(session);
-    
     return html`
-      <div class="session-card" @click=${() => this.handleSessionSelect(session.sessionId)}>
+      <div class="session-card" @click=${() => this.handleSessionSelect(session)}>
         <div class="session-header">
-          <h3 class="session-title">${session.title}</h3>
-          <div class="session-status ${session.completed ? 'completed' : 'in-progress'}">
-            ${session.completed ? '완료' : '진행중'}
+          <h3 class="session-title">세션 ${session.sessionNumber}. ${session.title}</h3>
+          <div class="session-status ${session.status}">
+            ${this.getStatusText(session.status)}
           </div>
         </div>
         
         <p class="session-description">
-          ${config?.description || '인터뷰 세션에 참여하여 당신의 이야기를 들려주세요.'}
+          ${session.description}
         </p>
         
         <div class="session-footer">
+          <div class="session-duration">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12,6 12,12 16,14"/>
+            </svg>
+            약 ${this.formatDuration(session.estimatedDuration)}
+          </div>
           <div class="conversation-count">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
             </svg>
-            ${session.conversations.length}개 대화
+            ${session.totalQuestions}개 질문
           </div>
           <div class="last-updated">
-            ${this.formatLastUpdated(session.lastUpdated)}
+            ${this.formatLastUpdated(session)}
           </div>
         </div>
         
-        <div class="session-progress" style="width: ${progressPercentage}%"></div>
+        <div class="session-progress" style="width: ${session.progressPercent}%"></div>
+      </div>
+    `;
+  }
+
+  private renderLoadingState() {
+    return html`
+      <div class="loading-container">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">세션을 불러오는 중...</div>
+      </div>
+    `;
+  }
+
+  private renderErrorState() {
+    return html`
+      <div class="error-container">
+        <div class="error-message">${this.error}</div>
+        <button class="retry-button" @click=${this.loadSessions}>
+          다시 시도
+        </button>
       </div>
     `;
   }
 
   render() {
-    const sessions = Object.values(this.sessionData);
-    const hasSessions = sessions.length > 0;
-
     return html`
       <div class="container">
         <div class="header">
@@ -318,13 +487,20 @@ export class SessionListScreen extends LitElement {
           <p>당신의 소중한 경험과 추억을 나누어주세요</p>
         </div>
         
-        ${hasSessions ? html`
-          <div class="sessions-container">
-            <div class="sessions-grid">
-              ${sessions.map(session => this.renderSessionCard(session))}
+        ${this.loading 
+          ? this.renderLoadingState()
+          : this.error 
+          ? this.renderErrorState()
+          : this.sessions.length > 0 
+          ? html`
+            <div class="sessions-container">
+              <div class="sessions-grid">
+                ${this.sessions.map(session => this.renderSessionCard(session))}
+              </div>
             </div>
-          </div>
-        ` : this.renderEmptyState()}
+          `
+          : this.renderEmptyState()
+        }
       </div>
     `;
   }
