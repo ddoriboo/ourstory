@@ -58,34 +58,34 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
   
-  /* 간격 시스템 - 8px 기반 더 넉넉한 간격 */
+  /* 간격 시스템 - 더 넉넉한 간격 */
   --spacing-0: 0;
-  --spacing-1: 8px;
-  --spacing-2: 16px;
-  --spacing-3: 24px;
-  --spacing-4: 32px;
-  --spacing-5: 40px;
-  --spacing-6: 48px;
-  --spacing-8: 64px;
-  --spacing-10: 80px;
-  --spacing-12: 96px;
-  --spacing-16: 128px;
-  --spacing-20: 160px;
-  --spacing-24: 192px;
+  --spacing-1: 12px;     /* 기본 단위 증가 */
+  --spacing-2: 20px;
+  --spacing-3: 32px;
+  --spacing-4: 40px;     /* 버튼 padding 등에 사용 */
+  --spacing-5: 48px;
+  --spacing-6: 56px;
+  --spacing-8: 80px;
+  --spacing-10: 100px;
+  --spacing-12: 120px;
+  --spacing-16: 160px;
+  --spacing-20: 200px;
+  --spacing-24: 240px;
   
   /* 폰트 패밀리 */
   --font-family: 'Noto Sans KR', 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
   
-  /* 타이포그래피 - 더 큰 폰트 크기 */
-  --text-xs: 18px;      /* 최소 크기 18px */
-  --text-sm: 20px;
-  --text-base: 24px;    /* Body Regular - 큰 크기 */
-  --text-lg: 28px;      /* Body Large */
-  --text-xl: 32px;      /* Heading 3 */
-  --text-2xl: 40px;     /* Heading 2 */
-  --text-3xl: 48px;     /* Heading 1 - 매우 큼 */
-  --text-4xl: 56px;
-  --text-5xl: 64px;
+  /* 타이포그래피 - 훨씬 더 큰 폰트 크기 */
+  --text-xs: 20px;      /* 최소 크기 20px */
+  --text-sm: 24px;
+  --text-base: 28px;    /* Body Regular - 매우 큰 크기 */
+  --text-lg: 32px;      /* Body Large */
+  --text-xl: 40px;      /* Heading 3 */
+  --text-2xl: 48px;     /* Heading 2 */
+  --text-3xl: 56px;     /* Heading 1 - 매우 큼 */
+  --text-4xl: 64px;
+  --text-5xl: 72px;
   
   /* 행간 */
   --leading-none: 1;
@@ -178,22 +178,22 @@ li {
   line-height: var(--leading-normal);
 }
 
-/* 버튼 컴포넌트 시스템 - 더 큰 크기 */
+/* 버튼 컴포넌트 시스템 - 훨씬 더 큰 크기 */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-3);
-  padding: var(--spacing-4) var(--spacing-6);
-  font-size: var(--text-base);
-  font-weight: 600;
+  padding: var(--spacing-5) var(--spacing-8);
+  font-size: var(--text-lg);
+  font-weight: 700;
   line-height: var(--leading-none);
   text-decoration: none;
-  border: 3px solid transparent;
-  border-radius: var(--radius-md);
+  border: 4px solid transparent;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  min-height: 72px;
+  min-height: 88px;
   white-space: nowrap;
   user-select: none;
   font-family: inherit;
@@ -204,16 +204,16 @@ button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-2);
-  padding: var(--spacing-4) var(--spacing-6);
-  font-size: var(--text-base);
-  font-weight: 600;
+  gap: var(--spacing-3);
+  padding: var(--spacing-5) var(--spacing-8);
+  font-size: var(--text-lg);
+  font-weight: 700;
   line-height: var(--leading-none);
-  border: 3px solid transparent;
-  border-radius: var(--radius-md);
+  border: 4px solid transparent;
+  border-radius: var(--radius-lg);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  min-height: 72px;
+  min-height: 88px;
   font-family: inherit;
 }
 
@@ -282,25 +282,26 @@ button {
   transform: translateY(-1px);
 }
 
-/* 버튼 크기 */
+/* 버튼 크기 - 모두 더 크게 */
 .btn-sm {
-  padding: var(--spacing-3) var(--spacing-4);
-  font-size: var(--text-sm);
-  min-height: 64px;
-}
-
-.btn-lg {
-  padding: var(--spacing-5) var(--spacing-8);
-  font-size: var(--text-lg);
+  padding: var(--spacing-4) var(--spacing-6);
+  font-size: var(--text-base);
   min-height: 80px;
   border-radius: var(--radius-lg);
 }
 
-.btn-xl {
+.btn-lg {
   padding: var(--spacing-6) var(--spacing-10);
   font-size: var(--text-xl);
-  min-height: 96px;
+  min-height: 104px;
   border-radius: var(--radius-xl);
+}
+
+.btn-xl {
+  padding: var(--spacing-8) var(--spacing-12);
+  font-size: var(--text-2xl);
+  min-height: 128px;
+  border-radius: var(--radius-2xl);
 }
 
 .btn-full {
@@ -338,36 +339,38 @@ button {
   background: var(--color-surface);
 }
 
-/* 입력 필드 - 더 큰 크기 */
+/* 입력 필드 - 훨씬 더 큰 크기 */
 .input {
   width: 100%;
-  padding: var(--spacing-4) var(--spacing-5);
-  font-size: var(--text-base);
+  padding: var(--spacing-5) var(--spacing-6);
+  font-size: var(--text-lg);
   line-height: var(--leading-normal);
   color: var(--color-text);
   background: var(--color-background);
-  border: 3px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 4px solid var(--color-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease-in-out;
-  min-height: 72px;
+  min-height: 88px;
   font-family: inherit;
+  font-weight: 500;
 }
 
 /* 모든 입력 필드에 스타일 적용 */
 input, textarea, select {
   width: 100%;
-  padding: var(--spacing-4) var(--spacing-5);
-  font-size: var(--text-base);
+  padding: var(--spacing-5) var(--spacing-6);
+  font-size: var(--text-lg);
   line-height: var(--leading-normal);
   color: var(--color-text);
   background: var(--color-background);
-  border: 3px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border: 4px solid var(--color-border);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all 0.2s ease-in-out;
-  min-height: 72px;
+  min-height: 88px;
   font-family: inherit;
+  font-weight: 500;
 }
 
 .input:focus, input:focus, textarea:focus, select:focus {
@@ -551,16 +554,16 @@ a:hover {
   outline-offset: 2px;
 }
 
-/* 반응형 디자인 */
+/* 반응형 디자인 - 모바일 최적화 */
 @media (max-width: 768px) {
   :root {
-    --text-3xl: 40px;    /* 여전히 큼 */
-    --text-2xl: 32px;
-    --text-xl: 28px;
-    --text-lg: 24px;
-    --text-base: 22px;   /* 모바일에서 더 큰 크기 */
-    --text-sm: 20px;
-    --text-xs: 18px;     /* 최소 18px */
+    --text-3xl: 52px;    /* 타블릿에서도 큰 크기 */
+    --text-2xl: 44px;
+    --text-xl: 36px;
+    --text-lg: 32px;
+    --text-base: 28px;   /* 모바일에서 더 큰 크기 */
+    --text-sm: 24px;
+    --text-xs: 20px;     /* 최소 20px */
   }
   
   .container {
@@ -568,54 +571,77 @@ a:hover {
   }
   
   .btn, button {
-    min-height: 80px;    /* 모바일에서 더 큰 버튼 */
-    padding: var(--spacing-4) var(--spacing-5);
+    min-height: 88px;    /* 모바일에서 더 큰 버튼 */
+    padding: var(--spacing-5) var(--spacing-6);
     font-size: var(--text-lg);
+    border-radius: var(--radius-lg);
   }
   
   .input, input, textarea, select {
-    min-height: 80px;    /* 모바일에서 더 큰 입력 필드 */
+    min-height: 88px;    /* 모바일에서 더 큰 입력 필드 */
     font-size: var(--text-lg);
-  }
-  
-  .btn-lg {
-    min-height: 88px;
     padding: var(--spacing-5) var(--spacing-6);
   }
   
-  .btn-xl {
-    min-height: 96px;
+  .btn-lg {
+    min-height: 104px;
     padding: var(--spacing-6) var(--spacing-8);
+    font-size: var(--text-xl);
+  }
+  
+  .btn-xl {
+    min-height: 120px;
+    padding: var(--spacing-8) var(--spacing-10);
+    font-size: var(--text-2xl);
   }
 }
 
 @media (max-width: 480px) {
   :root {
-    --text-3xl: 36px;    /* 작은 화면에서 조정 */
-    --text-2xl: 28px;
-    --text-xl: 24px;
-    --text-lg: 22px;
-    --text-base: 20px;
-    --text-sm: 18px;
-    --text-xs: 16px;
+    --text-3xl: 48px;    /* 작은 화면에서도 큰 크기 유지 */
+    --text-2xl: 40px;
+    --text-xl: 32px;
+    --text-lg: 28px;
+    --text-base: 24px;   /* 최소 24px */
+    --text-sm: 22px;
+    --text-xs: 20px;
+    
+    /* 모바일 전용 spacing 증가 */
+    --spacing-3: 36px;
+    --spacing-4: 48px;
+    --spacing-5: 56px;
+    --spacing-6: 64px;
   }
   
   .container {
-    padding: 0 var(--spacing-2);
+    padding: 0 var(--spacing-3);
   }
   
   .btn, button {
-    min-height: 72px;
-    padding: var(--spacing-3) var(--spacing-4);
+    min-height: 80px;    /* 더 큰 터치 영역 */
+    padding: var(--spacing-4) var(--spacing-5);
+    font-size: var(--text-lg);
+    border-radius: var(--radius-lg);
+    font-weight: 700;    /* 더 굵은 폰트 */
   }
   
   .input, input, textarea, select {
-    min-height: 72px;
+    min-height: 80px;
+    font-size: var(--text-lg);
+    padding: var(--spacing-4) var(--spacing-5);
+    border-width: 4px;   /* 더 굵은 테두리 */
   }
   
   .btn-lg {
-    min-height: 80px;
-    padding: var(--spacing-4) var(--spacing-5);
+    min-height: 96px;
+    padding: var(--spacing-5) var(--spacing-6);
+    font-size: var(--text-xl);
+  }
+  
+  .btn-xl {
+    min-height: 112px;
+    padding: var(--spacing-6) var(--spacing-8);
+    font-size: var(--text-2xl);
   }
 }
 
