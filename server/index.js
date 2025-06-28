@@ -237,10 +237,21 @@ app.get('/api/user-sessions', authenticateToken, async (req, res) => {
 });
 
 // 세션 시작
-app.post('/api/user-sessions/:sessionId/start', authenticateToken, async (req, res) => {
-  const { sessionId } = req.params;
+app.post('/api/user-sessions/:sessionNumber/start', authenticateToken, async (req, res) => {
+  const { sessionNumber } = req.params;
 
   try {
+    // 먼저 session_number로 session.id를 찾기
+    const sessionResult = await pool.query(`
+      SELECT id FROM sessions WHERE session_number = $1
+    `, [sessionNumber]);
+    
+    if (sessionResult.rows.length === 0) {
+      return res.status(404).json({ error: '존재하지 않는 세션입니다' });
+    }
+    
+    const sessionId = sessionResult.rows[0].id;
+
     // 기존 사용자 세션 확인
     let userSession = await pool.query(`
       SELECT id, status FROM user_sessions 

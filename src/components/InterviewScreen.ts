@@ -28,6 +28,7 @@ export class InterviewScreen extends LitElement {
   @state() conversationHistory: Array<{speaker: 'ai' | 'user', text: string, timestamp: Date}> = [];
   @state() isSessionConnected = false;
   @state() isInitializing = false;
+  @state() userSessionId: number | null = null;
 
   private client: GoogleGenAI;
   private session: Session | null = null;
@@ -329,6 +330,7 @@ export class InterviewScreen extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.loadConversationHistory();
+    this.startUserSession();
     this.initClient();
   }
 
@@ -343,6 +345,49 @@ export class InterviewScreen extends LitElement {
         ...conv,
         timestamp: new Date(conv.timestamp)
       }));
+    }
+  }
+
+  private async startUserSession() {
+    try {
+      const { apiService } = await import('../services/api');
+      
+      if (!apiService.isAuthenticated()) {
+        this.updateError('로그인이 필요합니다.');
+        return;
+      }
+
+      console.log('세션 시작 API 호출:', this.sessionId);
+      const userSession = await apiService.startSession(this.sessionId);
+      this.userSessionId = userSession.id;
+      console.log('사용자 세션 생성됨:', this.userSessionId);
+      
+      // 기존 대화 내역 로드
+      if (this.userSessionId) {
+        await this.loadConversationsFromAPI();
+      }
+    } catch (error) {
+      console.error('세션 시작 실패:', error);
+      this.updateError('세션 시작에 실패했습니다.');
+    }
+  }
+
+  private async loadConversationsFromAPI() {
+    try {
+      if (!this.userSessionId) return;
+      
+      const { apiService } = await import('../services/api');
+      const conversations = await apiService.getConversations(this.userSessionId);
+      
+      this.conversationHistory = conversations.map(conv => ({
+        speaker: conv.speaker,
+        text: conv.message_text,
+        timestamp: new Date(conv.message_timestamp)
+      }));
+      
+      console.log('대화 내역 로드됨:', this.conversationHistory.length, '개');
+    } catch (error) {
+      console.error('대화 내역 로드 실패:', error);
     }
   }
 
@@ -415,26 +460,45 @@ export class InterviewScreen extends LitElement {
             this.isSessionConnected = true;
             this.updateStatus('AI가 인사를 준비하고 있습니다...');
             
+            // 더 안전한 초기 메시지 전송
             setTimeout(() => {
-              if (this.session && this.isSessionConnected) {
-                try {
-                  this.session.sendRealtimeInput({
-                    text: "안녕하세요. 지금부터 인터뷰를 시작하겠습니다. 먼저 인사를 해주세요."
-                  });
-                  this.updateStatus('🎤 AI가 인사를 시작했습니다. 녹음 버튼을 눌러 응답해주세요.');
-                } catch (error) {
-                  console.error('초기 메시지 전송 오류:', error);
-                  this.updateError('AI 인사 전송에 실패했습니다.');
-                }
-              }
-            }, 1000);
+              this.sendInitialGreeting();
+            }, 2000); // 2초로 늘림
           },
           onmessage: async (message: LiveServerMessage) => {
+            console.log('Gemini 응답 수신:', message);
+            
+            // AI 텍스트 응답 처리 (여러 방법으로 시도)
+            let aiText = null;
+            
+            // 방법 1: 기존 방식
             const textPart = message.serverContent?.modelTurn?.parts?.find(
               part => part.text && part.text.trim()
             );
             if (textPart?.text) {
-              this.addToConversation('ai', textPart.text);
+              aiText = textPart.text;
+            }
+            
+            // 방법 2: 모든 parts에서 텍스트 찾기
+            if (!aiText && message.serverContent?.modelTurn?.parts) {
+              for (const part of message.serverContent.modelTurn.parts) {
+                if (part.text && part.text.trim()) {
+                  aiText = part.text;
+                  break;
+                }
+              }
+            }
+            
+            // 방법 3: 다른 경로 시도
+            if (!aiText && message.serverContent?.text) {
+              aiText = message.serverContent.text;
+            }
+            
+            if (aiText) {
+              console.log('AI 텍스트 응답:', aiText);
+              this.addToConversation('ai', aiText.trim());
+            } else {
+              console.warn('AI 텍스트 응답을 찾을 수 없음:', message);
             }
 
             const audio = message.serverContent?.modelTurn?.parts[0]?.inlineData;
@@ -560,16 +624,76 @@ ${this.currentQuestionIndex === 0 ?
     this.error = msg;
   }
 
-  private addToConversation(speaker: 'ai' | 'user', text: string) {
+  private async sendInitialGreeting() {
+    if (!this.session || !this.isSessionConnected) {
+      console.warn('세션이 준비되지 않아 인사를 보낼 수 없습니다');
+      return;
+    }
+
+    try {
+      console.log('AI 초기 인사 전송 시도...');
+      
+      // 여러 번 시도하는 로직
+      let attempts = 0;
+      const maxAttempts = 3;
+      
+      while (attempts < maxAttempts) {
+        try {
+          await this.session.sendRealtimeInput({
+            text: "안녕하세요. 지금부터 인터뷰를 시작하겠습니다. 먼저 인사를 해주세요."
+          });
+          
+          console.log('AI 인사 전송 성공');
+          this.updateStatus('🎤 AI가 인사를 시작했습니다. 녹음 버튼을 눌러 응답해주세요.');
+          return;
+        } catch (error) {
+          attempts++;
+          console.warn(`AI 인사 전송 시도 ${attempts}/${maxAttempts} 실패:`, error);
+          
+          if (attempts < maxAttempts) {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
+          }
+        }
+      }
+      
+      // 모든 시도 실패
+      throw new Error('모든 시도 실패');
+      
+    } catch (error) {
+      console.error('AI 인사 전송 최종 실패:', error);
+      this.updateStatus('🎤 AI 인사 전송에 실패했지만, 녹음 버튼을 눌러 대화를 시작할 수 있습니다.');
+    }
+  }
+
+  private async addToConversation(speaker: 'ai' | 'user', text: string) {
     const newMessage = {
       speaker,
       text: text.trim(),
       timestamp: new Date()
     };
     
+    // 로컬 상태 업데이트
     this.conversationHistory = [...this.conversationHistory, newMessage];
     
-    // 세션 데이터 업데이트
+    // API를 통해 대화 저장
+    try {
+      if (this.userSessionId) {
+        const { apiService } = await import('../services/api');
+        await apiService.saveConversation({
+          userSessionId: this.userSessionId,
+          speaker: speaker,
+          messageText: text.trim(),
+          questionIndex: this.currentQuestionIndex
+        });
+        console.log('대화 저장 성공:', speaker, text.trim());
+      } else {
+        console.warn('userSessionId가 없어서 대화를 저장할 수 없습니다');
+      }
+    } catch (error) {
+      console.error('대화 저장 실패:', error);
+    }
+    
+    // 세션 데이터 업데이트 (기존 방식 유지)
     this.dispatchEvent(new CustomEvent('session-update', {
       detail: {
         data: {
