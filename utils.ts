@@ -24,15 +24,27 @@ function decode(base64) {
 }
 
 function createBlob(data: Float32Array): Blob {
+  if (!data || data.length === 0) {
+    console.warn('createBlob: 빈 데이터가 전달되었습니다');
+    return null;
+  }
+
   const l = data.length;
   const int16 = new Int16Array(l);
   for (let i = 0; i < l; i++) {
     // convert float32 -1 to 1 to int16 -32768 to 32767
-    int16[i] = data[i] * 32768;
+    const value = Math.max(-1, Math.min(1, data[i])); // 클리핑 방지
+    int16[i] = value * 32767; // 32768 대신 32767 사용 (더 안전)
+  }
+
+  const encodedData = encode(new Uint8Array(int16.buffer));
+  if (!encodedData) {
+    console.warn('createBlob: 인코딩 실패');
+    return null;
   }
 
   return {
-    data: encode(new Uint8Array(int16.buffer)),
+    data: encodedData,
     mimeType: 'audio/pcm;rate=16000',
   };
 }

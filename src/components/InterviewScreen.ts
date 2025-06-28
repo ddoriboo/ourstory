@@ -380,8 +380,9 @@ export class InterviewScreen extends LitElement {
 
     const apiKey = process.env.GEMINI_API_KEY || 
                   process.env.VITE_GEMINI_API_KEY || 
-                  (import.meta as any)?.env?.VITE_GEMINI_API_KEY ||
-                  'AIzaSyBn158ydMQWCNHWxy2HSPHDZC3Snms2n0w';
+                  (import.meta as any)?.env?.VITE_GEMINI_API_KEY;
+                  
+    console.log('API 키 확인:', apiKey ? '설정됨' : '설정되지 않음');
     
     if (!apiKey || apiKey === 'PLACEHOLDER_API_KEY') {
       this.updateError('API 키가 설정되지 않았습니다.');
@@ -416,10 +417,15 @@ export class InterviewScreen extends LitElement {
             
             setTimeout(() => {
               if (this.session && this.isSessionConnected) {
-                this.session.sendRealtimeInput({
-                  text: "안녕하세요. 지금부터 인터뷰를 시작하겠습니다. 먼저 인사를 해주세요."
-                });
-                this.updateStatus('🎤 AI가 인사를 시작했습니다. 녹음 버튼을 눌러 응답해주세요.');
+                try {
+                  this.session.sendRealtimeInput({
+                    text: "안녕하세요. 지금부터 인터뷰를 시작하겠습니다. 먼저 인사를 해주세요."
+                  });
+                  this.updateStatus('🎤 AI가 인사를 시작했습니다. 녹음 버튼을 눌러 응답해주세요.');
+                } catch (error) {
+                  console.error('초기 메시지 전송 오류:', error);
+                  this.updateError('AI 인사 전송에 실패했습니다.');
+                }
               }
             }, 1000);
           },
@@ -608,12 +614,30 @@ ${this.currentQuestionIndex === 0 ?
         const inputBuffer = audioProcessingEvent.inputBuffer;
         const pcmData = inputBuffer.getChannelData(0);
 
+        // 오디오 데이터 유효성 검사
+        if (!pcmData || pcmData.length === 0) {
+          console.warn('오디오 데이터가 비어있습니다');
+          return;
+        }
+
+        // 무음 구간 감지 (선택적) - 임계값을 낮춤
+        const rms = Math.sqrt(pcmData.reduce((sum, val) => sum + val * val, 0) / pcmData.length);
+        if (rms < 0.001) {
+          // 너무 조용한 경우 전송하지 않음 (임계값 낮춤)
+          return;
+        }
+
         try {
-          this.session.sendRealtimeInput({media: createBlob(pcmData)});
+          const mediaBlob = createBlob(pcmData);
+          if (mediaBlob && mediaBlob.data && mediaBlob.data.length > 0) {
+            this.session.sendRealtimeInput({media: mediaBlob});
+          } else {
+            console.warn('미디어 블롭 생성 실패 또는 빈 데이터');
+          }
         } catch (error) {
           console.error('오디오 전송 오류:', error);
-          this.stopRecording();
-          this.updateError('오디오 전송 중 오류가 발생했습니다.');
+          // 오류가 발생해도 녹음을 중지하지 않고 계속 시도
+          console.warn('오디오 전송 실패, 계속 시도 중...');
         }
       };
 
@@ -670,7 +694,14 @@ ${this.currentQuestionIndex === 0 ?
   }
 
   private isSessionValid(): boolean {
-    return this.session !== null && this.isSessionConnected;
+    const isValid = this.session !== null && this.isSessionConnected;
+    if (!isValid) {
+      console.warn('세션이 유효하지 않음:', {
+        session: this.session !== null,
+        connected: this.isSessionConnected
+      });
+    }
+    return isValid;
   }
 
   private nextQuestion() {
@@ -679,10 +710,15 @@ ${this.currentQuestionIndex === 0 ?
       this.currentQuestionIndex++;
       
       if (this.session && this.isSessionConnected) {
-        const newQuestion = currentSession.questions[this.currentQuestionIndex];
-        this.session.sendRealtimeInput({
-          text: `이제 다음 질문으로 넘어가세요. 질문 ${this.currentQuestionIndex + 1}번: "${newQuestion}"을 어르신께 해주세요.`
-        });
+        try {
+          const newQuestion = currentSession.questions[this.currentQuestionIndex];
+          this.session.sendRealtimeInput({
+            text: `이제 다음 질문으로 넘어가세요. 질문 ${this.currentQuestionIndex + 1}번: "${newQuestion}"을 어르신께 해주세요.`
+          });
+        } catch (error) {
+          console.error('다음 질문 전송 오류:', error);
+          this.updateError('질문 전송에 실패했습니다.');
+        }
       }
     }
   }
@@ -692,11 +728,16 @@ ${this.currentQuestionIndex === 0 ?
       this.currentQuestionIndex--;
       
       if (this.session && this.isSessionConnected) {
-        const currentSession = interviewConfig.sessions[this.sessionId];
-        const newQuestion = currentSession.questions[this.currentQuestionIndex];
-        this.session.sendRealtimeInput({
-          text: `이전 질문으로 돌아가겠습니다. 질문 ${this.currentQuestionIndex + 1}번: "${newQuestion}"에 대해 다시 이야기해보세요.`
-        });
+        try {
+          const currentSession = interviewConfig.sessions[this.sessionId];
+          const newQuestion = currentSession.questions[this.currentQuestionIndex];
+          this.session.sendRealtimeInput({
+            text: `이전 질문으로 돌아가겠습니다. 질문 ${this.currentQuestionIndex + 1}번: "${newQuestion}"에 대해 다시 이야기해보세요.`
+          });
+        } catch (error) {
+          console.error('이전 질문 전송 오류:', error);
+          this.updateError('질문 전송에 실패했습니다.');
+        }
       }
     }
   }
