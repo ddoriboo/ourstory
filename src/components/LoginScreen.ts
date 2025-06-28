@@ -146,7 +146,7 @@ export class LoginScreen extends LitElement {
     }
   `;
 
-  private handleSubmit(e: Event) {
+  private async handleSubmit(e: Event) {
     e.preventDefault();
     this.error = '';
 
@@ -165,43 +165,35 @@ export class LoginScreen extends LitElement {
       return;
     }
 
-    // 간단한 로컬스토리지 기반 인증
-    if (this.isLogin) {
-      const savedUser = localStorage.getItem(`user_${this.username}`);
-      if (!savedUser) {
-        this.error = '존재하지 않는 계정입니다.';
-        return;
+    try {
+      const { apiService } = await import('../services/api');
+      
+      if (this.isLogin) {
+        // 로그인
+        const response = await apiService.login({
+          username: this.username,
+          password: this.password
+        });
+
+        // 로그인 성공
+        this.dispatchEvent(new CustomEvent('user-login', {
+          detail: response.user
+        }));
+      } else {
+        // 회원가입
+        const response = await apiService.register({
+          username: this.username,
+          password: this.password
+        });
+
+        // 회원가입 후 자동 로그인
+        this.dispatchEvent(new CustomEvent('user-login', {
+          detail: response.user
+        }));
       }
-
-      const userData = JSON.parse(savedUser);
-      if (userData.password !== this.password) {
-        this.error = '비밀번호가 올바르지 않습니다.';
-        return;
-      }
-
-      // 로그인 성공
-      this.dispatchEvent(new CustomEvent('user-login', {
-        detail: { id: this.username, username: this.username }
-      }));
-    } else {
-      // 회원가입
-      const existingUser = localStorage.getItem(`user_${this.username}`);
-      if (existingUser) {
-        this.error = '이미 존재하는 아이디입니다.';
-        return;
-      }
-
-      // 사용자 저장
-      localStorage.setItem(`user_${this.username}`, JSON.stringify({
-        username: this.username,
-        password: this.password,
-        createdAt: new Date().toISOString()
-      }));
-
-      // 자동 로그인
-      this.dispatchEvent(new CustomEvent('user-login', {
-        detail: { id: this.username, username: this.username }
-      }));
+    } catch (error) {
+      console.error('인증 오류:', error);
+      this.error = error.message || '로그인 중 오류가 발생했습니다.';
     }
   }
 

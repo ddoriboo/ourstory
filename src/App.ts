@@ -9,8 +9,10 @@ import './components/AutobiographyScreen';
 export type AppRoute = 'login' | 'sessionList' | 'interview' | 'storyView' | 'autobiography';
 
 export interface User {
-  id: string;
+  id: number;
   username: string;
+  full_name?: string;
+  birth_year?: number;
 }
 
 export interface SessionData {
@@ -165,24 +167,49 @@ export class OurStoryApp extends LitElement {
     this.loadUserData();
   }
 
-  private loadUserData() {
-    const savedUser = localStorage.getItem('ourstory_user');
-    if (savedUser) {
-      this.currentUser = JSON.parse(savedUser);
-      this.currentRoute = 'sessionList';
-    }
-
-    const savedSessions = localStorage.getItem('ourstory_sessions');
-    if (savedSessions) {
-      this.sessionData = JSON.parse(savedSessions);
+  private async loadUserData() {
+    // 기존 사용자 정보 로드 (API 토큰 기반)
+    try {
+      const { apiService } = await import('./services/api');
+      
+      if (apiService.isAuthenticated()) {
+        // 토큰이 있으면 세션 리스트로 이동
+        this.currentRoute = 'sessionList';
+        
+        // 세션 데이터 로드
+        await this.loadSessionsFromAPI();
+      }
+    } catch (error) {
+      console.error('사용자 데이터 로드 실패:', error);
+      // 토큰이 유효하지 않으면 로그아웃 처리
+      this.onLogout();
     }
   }
 
-  private saveUserData() {
-    if (this.currentUser) {
-      localStorage.setItem('ourstory_user', JSON.stringify(this.currentUser));
+  private async loadSessionsFromAPI() {
+    try {
+      const { apiService } = await import('./services/api');
+      const userSessions = await apiService.getUserSessions();
+      
+      // API 데이터를 기존 SessionData 형태로 변환
+      this.sessionData = {};
+      userSessions.forEach(us => {
+        this.sessionData[us.session_number] = {
+          sessionId: us.session_number,
+          title: us.title,
+          completed: us.status === 'completed',
+          conversations: [], // 대화는 필요할 때 별도로 로드
+          lastUpdated: new Date(us.last_updated)
+        };
+      });
+    } catch (error) {
+      console.error('세션 데이터 로드 실패:', error);
     }
-    localStorage.setItem('ourstory_sessions', JSON.stringify(this.sessionData));
+  }
+
+  private async saveUserData() {
+    // API 기반에서는 데이터가 자동으로 서버에 저장됨
+    // 필요시 여기서 추가 로직 구현
   }
 
   onLogin(user: User) {
@@ -191,10 +218,17 @@ export class OurStoryApp extends LitElement {
     this.saveUserData();
   }
 
-  onLogout() {
+  async onLogout() {
+    try {
+      const { apiService } = await import('./services/api');
+      apiService.logout();
+    } catch (error) {
+      console.error('로그아웃 처리 오류:', error);
+    }
+    
     this.currentUser = null;
     this.currentRoute = 'login';
-    localStorage.removeItem('ourstory_user');
+    this.sessionData = {};
   }
 
   onNavigate(route: AppRoute) {
@@ -206,7 +240,7 @@ export class OurStoryApp extends LitElement {
     this.currentRoute = 'interview';
   }
 
-  onUpdateSessionData(sessionId: number, data: Partial<SessionData>) {
+  async onUpdateSessionData(sessionId: number, data: Partial<SessionData>) {
     if (!this.sessionData[sessionId]) {
       this.sessionData[sessionId] = {
         sessionId,
@@ -216,13 +250,35 @@ export class OurStoryApp extends LitElement {
       };
     }
     
+    // 로컬 상태 업데이트
     this.sessionData[sessionId] = {
       ...this.sessionData[sessionId],
       ...data,
       lastUpdated: new Date()
     };
     
-    this.saveUserData();
+    // API로 대화 데이터 저장 (conversations가 있는 경우)
+    if (data.conversations && data.conversations.length > 0) {
+      try {
+        const { apiService } = await import('./services/api');
+        
+        // 새로운 대화만 저장 (기존에 없던 것들)
+        const existingConversations = this.sessionData[sessionId].conversations || [];
+        const newConversations = data.conversations.slice(existingConversations.length);
+        
+        for (const conversation of newConversations) {
+          await apiService.saveConversation({
+            userSessionId: sessionId, // 임시로 sessionId 사용
+            speaker: conversation.speaker,
+            messageText: conversation.text,
+            questionIndex: 0 // 임시값
+          });
+        }
+      } catch (error) {
+        console.error('대화 저장 실패:', error);
+      }
+    }
+    
     this.requestUpdate();
   }
 

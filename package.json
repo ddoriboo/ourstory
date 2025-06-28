@@ -5,23 +5,33 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "dev:server": "node server/index.js",
+    "build": "node database/railway-deploy-hook.js && vite build",
     "preview": "vite preview",
-    "start": "vite preview --port $PORT --host 0.0.0.0",
+    "start": "node server/index.js",
     "db:setup": "node database/setup-schema.js",
-    "db:test": "node database/test-db.js"
+    "db:test": "node database/test-db.js",
+    "db:force": "node database/force-create-tables.js"
   },
   "dependencies": {
     "@executeautomation/playwright-mcp-server": "^1.0.6",
     "@google/genai": "^0.9.0",
     "@lit/context": "^1.1.5",
     "@types/pg": "^8.15.4",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^17.0.0",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "lit": "^3.3.0",
     "pg": "^8.16.3",
     "three": "^0.176.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.14.0",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
