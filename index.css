@@ -122,6 +122,18 @@ body {
   background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  /* 한국어 텍스트 줄바꿈 최적화 */
+  word-break: keep-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 한국어 텍스트 최적화 */
+* {
+  word-break: keep-all;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* 타이포그래피 - 큰 폰트 크기 */
@@ -130,30 +142,36 @@ h1, h2, h3, h4, h5, h6 {
   line-height: var(--leading-tight);
   margin-bottom: var(--spacing-3);
   color: var(--color-text);
+  word-break: keep-all;
+  white-space: normal;
 }
 
 h1 { 
   font-size: var(--text-3xl); 
   font-weight: 700;
   margin-bottom: var(--spacing-6);
+  word-break: keep-all;
 }
 
 h2 { 
   font-size: var(--text-2xl); 
   font-weight: 600;
   margin-bottom: var(--spacing-5);
+  word-break: keep-all;
 }
 
 h3 { 
   font-size: var(--text-xl); 
   font-weight: 600;
   margin-bottom: var(--spacing-4);
+  word-break: keep-all;
 }
 
 h4 { 
   font-size: var(--text-lg); 
   font-weight: 600;
   margin-bottom: var(--spacing-3);
+  word-break: keep-all;
 }
 
 p {
@@ -161,11 +179,14 @@ p {
   line-height: var(--leading-relaxed);
   margin-bottom: var(--spacing-4);
   color: var(--color-text);
+  word-break: keep-all;
+  white-space: normal;
 }
 
 li {
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
+  word-break: keep-all;
 }
 
 .text-large {

@@ -24,6 +24,8 @@ export class SessionListScreen extends LitElement {
       padding: var(--spacing-20) var(--spacing-4);
       background: var(--color-background);
       min-height: 100vh;
+      width: 100%;
+      min-width: 320px;
     }
 
     .header {
@@ -36,12 +38,16 @@ export class SessionListScreen extends LitElement {
       color: var(--color-primary);
       margin-bottom: var(--spacing-3);
       font-weight: 700;
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .header p {
       color: var(--color-text-secondary);
       font-size: var(--text-lg);
       line-height: var(--leading-relaxed);
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .sessions-grid {
@@ -127,6 +133,8 @@ export class SessionListScreen extends LitElement {
       margin-bottom: var(--spacing-3);
       color: var(--color-text);
       line-height: var(--leading-tight);
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .session-description {
@@ -134,6 +142,8 @@ export class SessionListScreen extends LitElement {
       font-size: var(--text-base);
       margin-bottom: var(--spacing-4);
       line-height: var(--leading-normal);
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .session-meta {

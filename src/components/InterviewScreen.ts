@@ -55,6 +55,8 @@ export class InterviewScreen extends LitElement {
       display: block;
       background: var(--color-background);
       min-height: 100vh;
+      width: 100%;
+      min-width: 320px;
     }
 
     .interview-container {
@@ -111,6 +113,8 @@ export class InterviewScreen extends LitElement {
       color: var(--color-text);
       text-align: center;
       flex: 1;
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .connection-status {
@@ -145,6 +149,8 @@ export class InterviewScreen extends LitElement {
       font-weight: 500;
       color: var(--color-text);
       line-height: var(--leading-normal);
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .conversation-area {
@@ -165,6 +171,8 @@ export class InterviewScreen extends LitElement {
       line-height: var(--leading-relaxed);
       box-shadow: var(--shadow-sm);
       position: relative;
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .message.ai {
@@ -267,8 +275,10 @@ export class InterviewScreen extends LitElement {
       font-size: var(--text-lg);
       color: var(--color-text-secondary);
       font-weight: 500;
-      max-width: 300px;
+      max-width: 400px;
       line-height: var(--leading-normal);
+      word-break: keep-all;
+      white-space: normal;
     }
 
     .error-message {
