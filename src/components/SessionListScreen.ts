@@ -23,13 +23,16 @@ export class SessionListScreen extends LitElement {
       display: block;
       min-height: 100vh;
       background: var(--color-background);
-      padding: var(--spacing-8);
+      padding: var(--spacing-4);
       width: 100%;
     }
 
     .header {
       text-align: center;
-      margin-bottom: var(--spacing-24);
+      margin-bottom: var(--spacing-8);
+      max-width: 1024px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .header h1 {
@@ -51,26 +54,26 @@ export class SessionListScreen extends LitElement {
 
     .sessions-grid {
       display: grid;
-      gap: var(--spacing-8);
+      gap: var(--spacing-4);
       width: 100%;
-      max-width: 1400px;
+      max-width: 1024px;
       margin: 0 auto;
-      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-      padding: 0 var(--spacing-4);
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      padding: 0 var(--spacing-3);
     }
 
     .session-card {
       background: var(--gradient-surface);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: var(--spacing-20);
+      padding: var(--spacing-6);
       box-shadow: var(--shadow-sm);
       transition: all 0.2s ease-in-out;
       cursor: pointer;
       position: relative;
       overflow: hidden;
       width: 100%;
-      min-height: 300px;
+      min-height: 200px;
     }
 
     .session-card:hover {

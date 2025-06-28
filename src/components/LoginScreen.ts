@@ -22,13 +22,14 @@ export class LoginScreen extends LitElement {
 
     .login-container {
       width: 100%;
-      max-width: 1200px;
-      padding: var(--spacing-6);
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: var(--spacing-4);
     }
 
     .logo {
       text-align: center;
-      margin-bottom: var(--spacing-24);
+      margin-bottom: var(--spacing-12);
     }
 
     .logo h1 {
@@ -52,16 +53,16 @@ export class LoginScreen extends LitElement {
       background: var(--gradient-surface);
       border: 1px solid var(--color-border-light);
       border-radius: var(--radius-lg);
-      padding: var(--spacing-20);
+      padding: var(--spacing-8);
       box-shadow: var(--shadow-lg);
       width: 100%;
-      max-width: 800px;
+      max-width: 600px;
       margin: 0 auto;
     }
 
     .form-header {
       text-align: center;
-      margin-bottom: var(--spacing-20);
+      margin-bottom: var(--spacing-8);
     }
 
     .form-header h2 {

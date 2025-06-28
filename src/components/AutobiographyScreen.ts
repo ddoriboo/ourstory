@@ -27,56 +27,57 @@ export class AutobiographyScreen extends LitElement {
       display: block;
       background: var(--color-background);
       min-height: 100vh;
-      padding: 1rem;
+      padding: var(--spacing-3);
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1024px;
       margin: 0 auto;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: var(--spacing-8);
     }
 
     .header h1 {
       color: var(--color-primary);
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--spacing-2);
+      font-size: var(--text-3xl);
     }
 
     .header p {
-      color: var(--color-muted-foreground);
+      color: var(--color-text-secondary);
       font-size: var(--text-lg);
-      line-height: 1.6;
+      line-height: var(--leading-relaxed);
     }
 
     .stats-section {
-      background: var(--color-card);
+      background: var(--gradient-surface);
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem;
-      margin-bottom: 2rem;
+      padding: var(--spacing-6);
+      margin-bottom: var(--spacing-8);
       box-shadow: var(--shadow);
     }
 
     .stats-title {
       font-size: var(--text-xl);
       font-weight: 600;
-      margin-bottom: 1rem;
-      color: var(--color-foreground);
+      margin-bottom: var(--spacing-4);
+      color: var(--color-text);
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
+      gap: var(--spacing-4);
     }
 
     .stat-item {
       text-align: center;
-      padding: 1rem;
-      background: var(--color-muted);
+      padding: var(--spacing-4);
+      background: var(--color-surface);
       border-radius: var(--radius-lg);
       border: 1px solid var(--color-border);
     }

@@ -25,47 +25,48 @@ export class StoryViewScreen extends LitElement {
       display: block;
       background: var(--color-background);
       min-height: 100vh;
-      padding: 1rem;
+      padding: var(--spacing-3);
     }
 
     .container {
-      max-width: 800px;
+      max-width: 1024px;
       margin: 0 auto;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: var(--spacing-8);
     }
 
     .header h1 {
       color: var(--color-primary);
-      margin-bottom: 0.5rem;
+      margin-bottom: var(--spacing-2);
+      font-size: var(--text-3xl);
     }
 
     .header p {
-      color: var(--color-muted-foreground);
+      color: var(--color-text-secondary);
       font-size: var(--text-lg);
     }
 
     .view-toggle {
       display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
+      gap: var(--spacing-2);
+      margin-bottom: var(--spacing-8);
       justify-content: center;
     }
 
     .toggle-button {
-      padding: 1.25rem 2rem;
+      padding: var(--spacing-3) var(--spacing-4);
       border: 2px solid var(--color-border);
       border-radius: var(--radius-lg);
       background: var(--color-background);
-      color: var(--color-foreground);
-      font-size: var(--text-lg);
+      color: var(--color-text);
+      font-size: var(--text-base);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      min-height: 60px;
+      min-height: 56px;
     }
 
     .toggle-button:hover {
@@ -75,7 +76,7 @@ export class StoryViewScreen extends LitElement {
 
     .toggle-button.active {
       background: var(--color-primary);
-      color: var(--color-primary-foreground);
+      color: var(--color-text-inverse);
       border-color: var(--color-primary);
     }
 

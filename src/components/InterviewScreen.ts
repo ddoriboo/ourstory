@@ -63,7 +63,7 @@ export class InterviewScreen extends LitElement {
       flex-direction: column;
       min-height: 100vh;
       width: 100%;
-      max-width: 1200px;
+      max-width: 1024px;
       margin: 0 auto;
       position: relative;
     }
@@ -71,7 +71,7 @@ export class InterviewScreen extends LitElement {
     .header {
       background: var(--gradient-surface);
       border-bottom: 1px solid var(--color-border-light);
-      padding: var(--spacing-8);
+      padding: var(--spacing-4);
       box-shadow: var(--shadow-sm);
       width: 100%;
     }
