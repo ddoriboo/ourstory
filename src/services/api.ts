@@ -170,8 +170,8 @@ class ApiService {
     return response.userSessions;
   }
 
-  async startSession(sessionId: number): Promise<UserSession> {
-    const response = await this.request<{ userSession: UserSession }>(`/user-sessions/${sessionId}/start`, {
+  async startSession(sessionNumber: number): Promise<UserSession> {
+    const response = await this.request<{ userSession: UserSession }>(`/user-sessions/${sessionNumber}/start`, {
       method: 'POST',
     });
     return response.userSession;

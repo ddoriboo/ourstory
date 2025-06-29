@@ -665,37 +665,17 @@ ${this.currentQuestionIndex === 0 ?
     }
 
     try {
-      console.log('AI 초기 인사 전송 시도...');
+      console.log('AI 초기 인사 설정...');
       
-      // 여러 번 시도하는 로직
-      let attempts = 0;
-      const maxAttempts = 3;
+      // Gemini 2.5 realtime 모드는 초기 텍스트를 직접 보내지 않고
+      // systemInstruction으로 시작하도록 설정되어 있음
+      // 사용자가 먼저 말을 시작하도록 안내
       
-      while (attempts < maxAttempts) {
-        try {
-          await this.session.sendRealtimeInput({
-            text: "안녕하세요. 지금부터 인터뷰를 시작하겠습니다. 먼저 인사를 해주세요."
-          });
-          
-          console.log('AI 인사 전송 성공');
-          this.updateStatus('🎤 AI가 인사를 시작했습니다. 녹음 버튼을 눌러 응답해주세요.');
-          return;
-        } catch (error) {
-          attempts++;
-          console.warn(`AI 인사 전송 시도 ${attempts}/${maxAttempts} 실패:`, error);
-          
-          if (attempts < maxAttempts) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
-          }
-        }
-      }
-      
-      // 모든 시도 실패
-      throw new Error('모든 시도 실패');
+      this.updateStatus('🎤 녹음 버튼을 눌러 인터뷰를 시작해주세요. AI가 당신의 이야기를 들을 준비가 되었습니다.');
       
     } catch (error) {
-      console.error('AI 인사 전송 최종 실패:', error);
-      this.updateStatus('🎤 AI 인사 전송에 실패했지만, 녹음 버튼을 눌러 대화를 시작할 수 있습니다.');
+      console.error('초기 설정 실패:', error);
+      this.updateStatus('🎤 녹음 버튼을 눌러 대화를 시작해주세요.');
     }
   }
 
