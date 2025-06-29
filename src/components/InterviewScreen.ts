@@ -3,6 +3,7 @@ import {customElement, property, state} from 'lit/decorators.js';
 import {GoogleGenAI, LiveServerMessage, Modality, Session} from '@google/genai';
 import {createBlob, decode, decodeAudioData} from '../../utils';
 import {interviewConfig} from '../../interviewConfig';
+import {apiService} from '../services/api';
 
 export interface SessionData {
   sessionId: number;
@@ -384,7 +385,9 @@ export class InterviewScreen extends LitElement {
 
   private async startUserSession() {
     try {
-      const { apiService } = await import('../services/api');
+      // 디버깅: 토큰 상태 확인
+      console.log('토큰 확인:', apiService.getToken());
+      console.log('인증 상태:', apiService.isAuthenticated());
       
       if (!apiService.isAuthenticated()) {
         this.updateError('로그인이 필요합니다.');
@@ -410,7 +413,6 @@ export class InterviewScreen extends LitElement {
     try {
       if (!this.userSessionId) return;
       
-      const { apiService } = await import('../services/api');
       const conversations = await apiService.getConversations(this.userSessionId);
       
       this.conversationHistory = conversations.map(conv => ({
@@ -692,7 +694,6 @@ ${this.currentQuestionIndex === 0 ?
     // API를 통해 대화 저장
     try {
       if (this.userSessionId) {
-        const { apiService } = await import('../services/api');
         await apiService.saveConversation({
           userSessionId: this.userSessionId,
           speaker: speaker,
