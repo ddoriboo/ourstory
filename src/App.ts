@@ -152,6 +152,12 @@ export class OurStoryApp extends LitElement {
   constructor() {
     super();
     this.loadUserData();
+    
+    // 토큰 만료 시 자동 로그아웃 처리
+    window.addEventListener('auth-expired', () => {
+      console.log('토큰 만료로 인한 자동 로그아웃');
+      this.onLogout();
+    });
   }
 
   private async loadUserData() {

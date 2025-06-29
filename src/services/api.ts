@@ -90,6 +90,14 @@ class ApiService {
       const response = await fetch(url, config);
       
       if (!response.ok) {
+        // 인증 오류 시 자동 로그아웃
+        if (response.status === 401 || response.status === 403) {
+          console.log('인증 오류로 인한 자동 로그아웃');
+          this.clearToken();
+          // 로그인 화면으로 리다이렉트 이벤트 발생
+          window.dispatchEvent(new CustomEvent('auth-expired'));
+        }
+        
         const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
         throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
       }
@@ -117,7 +125,25 @@ class ApiService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.token;
+    if (!this.token) return false;
+    
+    try {
+      // JWT 토큰의 payload를 디코드해서 만료 시간 확인
+      const payload = JSON.parse(atob(this.token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      
+      if (payload.exp && currentTime >= payload.exp) {
+        console.log('토큰이 만료되었습니다. 자동 로그아웃합니다.');
+        this.clearToken();
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('토큰 검증 오류:', error);
+      this.clearToken();
+      return false;
+    }
   }
 
   // ==================
